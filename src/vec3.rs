@@ -17,6 +17,7 @@ pub trait Vector {
     fn make_unit_vector(&mut self);
     fn dot(self, o: Self) -> Float;
     fn cross(self, o: Self) -> Self;
+    fn unit_vector(self) -> Self;
 }
 
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -55,6 +56,10 @@ impl Vector for Vec3 {
             self[2] * o[0] - self[0] * o[2],
             self[0] * o[1] - self[1] * o[0],
         )
+    }
+
+    fn unit_vector(self) -> Self {
+        self / self.length()
     }
 }
 

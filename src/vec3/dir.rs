@@ -8,19 +8,19 @@ impl Dir {
         Self(Vec3::zero())
     }
 
-    fn new(x: Float, y: Float, z: Float) -> Self {
+    pub fn new(x: Float, y: Float, z: Float) -> Self {
         Self(Vec3::new(x, y, z))
     }
 
-    fn x(self) -> Float {
+    pub fn x(self) -> Float {
         self.0[0]
     }
 
-    fn y(self) -> Float {
+    pub fn y(self) -> Float {
         self.0[1]
     }
 
-    fn z(self) -> Float {
+    pub fn z(self) -> Float {
         self.0[2]
     }
 }
@@ -44,6 +44,10 @@ impl Vector for Dir {
 
     fn cross(self, o: Self) -> Self {
         Self(self.0.cross(o.0))
+    }
+
+    fn unit_vector(self) -> Self {
+        Self(self.0.unit_vector())
     }
 }
 

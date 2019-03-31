@@ -8,7 +8,7 @@ impl Pos {
         Self(Vec3::zero())
     }
 
-    fn new(x: Float, y: Float, z: Float) -> Self {
+    pub fn new(x: Float, y: Float, z: Float) -> Self {
         Self(Vec3::new(x, y, z))
     }
 
@@ -44,6 +44,10 @@ impl Vector for Pos {
 
     fn cross(self, o: Self) -> Self {
         Self(self.0.cross(o.0))
+    }
+
+    fn unit_vector(self) -> Self {
+        Self(self.0.unit_vector())
     }
 }
 

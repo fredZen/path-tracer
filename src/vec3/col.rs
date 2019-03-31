@@ -1,4 +1,4 @@
-ase crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
+use crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Col(Vec3);
@@ -44,6 +44,10 @@ impl Vector for Col {
 
     fn cross(self, o: Self) -> Self {
         Self(self.0.cross(o.0))
+    }
+
+    fn unit_vector(self) -> Self {
+        Self(self.0.unit_vector())
     }
 }
 

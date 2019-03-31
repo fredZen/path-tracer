@@ -1,12 +1,12 @@
 use crate::vec3::{Dir, Float, Pos};
 
-struct Ray {
+pub struct Ray {
     a: Pos,
     b: Dir,
 }
 
 impl Ray {
-    fn new(a: Pos, b: Dir) -> Self {
+    pub fn new(a: Pos, b: Dir) -> Self {
         Ray { a, b }
     }
 
@@ -14,7 +14,7 @@ impl Ray {
         self.a
     }
 
-    fn direction(&self) -> Dir {
+    pub fn direction(&self) -> Dir {
         self.b
     }
 
