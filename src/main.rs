@@ -1,8 +1,7 @@
-mod col;
-mod pos;
+mod ray;
 mod vec3;
 
-use vec3::Float;
+use vec3::{Col, Float};
 
 fn as_u8(f: Float) -> u8 {
     if f < 1. {
@@ -13,8 +12,6 @@ fn as_u8(f: Float) -> u8 {
 }
 
 fn main() {
-    use col::Col;
-
     let nx = 200u16;
     let ny = 100u16;
     print!("P3\n{} {}\n255\n", nx, ny);

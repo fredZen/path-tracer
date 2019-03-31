@@ -1,34 +1,31 @@
-#[cfg(test)]
-mod tests;
-
-use crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
+use crate::vec3::{Dir, Float, ParseVec3Error, Vec3, Vector};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Col(Vec3);
+pub struct Pos(Vec3);
 
-impl Col {
-    fn zero() -> Col {
-        Col(Vec3::zero())
+impl Pos {
+    fn zero() -> Self {
+        Self(Vec3::zero())
     }
 
-    pub fn new(r: Float, g: Float, b: Float) -> Col {
-        Col(Vec3::new(r, g, b))
+    fn new(x: Float, y: Float, z: Float) -> Self {
+        Self(Vec3::new(x, y, z))
     }
 
-    pub fn r(self) -> Float {
+    fn x(self) -> Float {
         self.0[0]
     }
 
-    pub fn g(self) -> Float {
+    fn y(self) -> Float {
         self.0[1]
     }
 
-    pub fn b(self) -> Float {
+    fn z(self) -> Float {
         self.0[2]
     }
 }
 
-impl Vector for Col {
+impl Vector for Pos {
     fn squared_length(self) -> Float {
         self.0.squared_length()
     }
@@ -50,7 +47,7 @@ impl Vector for Col {
     }
 }
 
-impl std::str::FromStr for Col {
+impl std::str::FromStr for Pos {
     type Err = ParseVec3Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -59,21 +56,21 @@ impl std::str::FromStr for Col {
     }
 }
 
-impl std::fmt::Display for Col {
+impl std::fmt::Display for Pos {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(fmt, "{}", self.0)
     }
 }
 
-impl std::ops::Neg for Col {
+impl std::ops::Neg for Pos {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Col(-self.0)
+        Pos(-self.0)
     }
 }
 
-impl std::ops::Index<usize> for Col {
+impl std::ops::Index<usize> for Pos {
     type Output = Float;
 
     fn index(&self, i: usize) -> &Float {
@@ -81,99 +78,99 @@ impl std::ops::Index<usize> for Col {
     }
 }
 
-impl std::ops::IndexMut<usize> for Col {
+impl std::ops::IndexMut<usize> for Pos {
     fn index_mut(&mut self, i: usize) -> &mut Float {
         &mut self.0[i]
     }
 }
 
-impl std::ops::Add for Col {
+impl std::ops::Add<Dir> for Pos {
     type Output = Self;
 
-    fn add(self, o: Self) -> Self::Output {
-        Col(self.0 + o.0)
+    fn add(self, o: Dir) -> Self::Output {
+        Pos(self.0 + o.0)
     }
 }
 
-impl std::ops::Sub for Col {
+impl std::ops::Sub<Dir> for Pos {
     type Output = Self;
 
-    fn sub(self, o: Self) -> Self::Output {
-        Col(self.0 - o.0)
+    fn sub(self, o: Dir) -> Self::Output {
+        Pos(self.0 - o.0)
     }
 }
 
-impl std::ops::Mul for Col {
+impl std::ops::Mul for Pos {
     type Output = Self;
 
     fn mul(self, o: Self) -> Self::Output {
-        Col(self.0 * o.0)
+        Pos(self.0 * o.0)
     }
 }
 
-impl std::ops::Div for Col {
+impl std::ops::Div for Pos {
     type Output = Self;
 
     fn div(self, o: Self) -> Self::Output {
-        Col(self.0 / o.0)
+        Pos(self.0 / o.0)
     }
 }
 
-impl std::ops::Mul<Col> for Float {
-    type Output = Col;
+impl std::ops::Mul<Pos> for Float {
+    type Output = Pos;
 
-    fn mul(self, o: Col) -> Self::Output {
-        Col(self * o.0)
+    fn mul(self, o: Pos) -> Self::Output {
+        Pos(self * o.0)
     }
 }
 
-impl std::ops::Div<Float> for Col {
+impl std::ops::Div<Float> for Pos {
     type Output = Self;
 
     fn div(self, o: Float) -> Self::Output {
-        Col(self.0 / o)
+        Pos(self.0 / o)
     }
 }
 
-impl std::ops::Mul<Float> for Col {
+impl std::ops::Mul<Float> for Pos {
     type Output = Self;
 
     fn mul(self, o: Float) -> Self::Output {
-        Col(self.0 * o)
+        Pos(self.0 * o)
     }
 }
 
-impl std::ops::AddAssign for Col {
-    fn add_assign(&mut self, i: Self) {
+impl std::ops::AddAssign<Dir> for Pos {
+    fn add_assign(&mut self, i: Dir) {
         self.0 += i.0
     }
 }
 
-impl std::ops::SubAssign for Col {
-    fn sub_assign(&mut self, i: Self) {
+impl std::ops::SubAssign<Dir> for Pos {
+    fn sub_assign(&mut self, i: Dir) {
         self.0 -= i.0
     }
 }
 
-impl std::ops::MulAssign for Col {
+impl std::ops::MulAssign for Pos {
     fn mul_assign(&mut self, i: Self) {
         self.0 *= i.0
     }
 }
 
-impl std::ops::DivAssign for Col {
+impl std::ops::DivAssign for Pos {
     fn div_assign(&mut self, i: Self) {
         self.0 /= i.0
     }
 }
 
-impl std::ops::MulAssign<Float> for Col {
+impl std::ops::MulAssign<Float> for Pos {
     fn mul_assign(&mut self, t: Float) {
         self.0 *= t
     }
 }
 
-impl std::ops::DivAssign<Float> for Col {
+impl std::ops::DivAssign<Float> for Pos {
     fn div_assign(&mut self, t: Float) {
         self.0 /= t
     }
