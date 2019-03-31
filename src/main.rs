@@ -4,10 +4,23 @@ mod vec3;
 use ray::Ray;
 use vec3::{Col, Dir, Float, Pos, Vector};
 
+fn hit_sphere(center: Pos, radius: Float, r: &Ray) -> bool {
+    let oc = r.origin() - center;
+    let a = r.direction().dot(r.direction());
+    let b = 2. * oc.dot(r.direction());
+    let c = oc.dot(oc) - radius * radius;
+    let discriminant = b*b - 4. * a * c;
+    discriminant > 0.
+}
+
 fn colour(r: &Ray) -> Col {
-    let unit_direction = r.direction().unit_vector();
-    let t = 0.5 * (unit_direction.y() + 1.);
-    (1. - t) * Col::new(1., 1., 1.) + t * Col::new(0.5, 0.7, 1.0)
+    if hit_sphere(Pos::new(0., 0., -1.), 0.5, r) {
+        Col::new(1., 0., 0.)
+    } else {
+        let unit_direction = r.direction().unit_vector();
+        let t = 0.5 * (unit_direction.y() + 1.);
+        (1. - t) * Col::new(1., 1., 1.) + t * Col::new(0.5, 0.7, 1.0)
+    }
 }
 
 fn as_u8(f: Float) -> u8 {

@@ -10,7 +10,7 @@ impl Ray {
         Ray { a, b }
     }
 
-    fn origin(&self) -> Pos {
+    pub fn origin(&self) -> Pos {
         self.a
     }
 

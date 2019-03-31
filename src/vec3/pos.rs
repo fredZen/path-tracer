@@ -104,6 +104,14 @@ impl std::ops::Sub<Dir> for Pos {
     }
 }
 
+impl std::ops::Sub<Pos> for Pos {
+    type Output = Dir;
+
+    fn sub(self, o: Pos) -> Self::Output {
+        Dir(self.0 - o.0)
+    }
+}
+
 impl std::ops::Mul for Pos {
     type Output = Self;
 
