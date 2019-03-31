@@ -18,7 +18,7 @@ impl Ray {
         self.b
     }
 
-    fn point_at(&self, t: Float) -> Pos {
+    pub fn point_at(&self, t: Float) -> Pos {
         self.a + t * self.b
     }
 }
