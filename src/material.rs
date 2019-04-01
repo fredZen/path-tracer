@@ -6,7 +6,8 @@ pub use metal::Metal;
 
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::Col;
+use crate::vec3::{Col, Dir, Vector};
+use rand::prelude::*;
 
 pub struct Scatter {
     pub attenuation: Col,
@@ -15,4 +16,14 @@ pub struct Scatter {
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<Scatter>;
+}
+
+fn random_in_unit_sphere() -> Dir {
+    let mut rng = thread_rng();
+    loop {
+        let p = 2. * Dir::new(rng.gen(), rng.gen(), rng.gen()) - Dir::new(1., 1., 1.);
+        if p.squared_length() < 1. {
+            return p;
+        }
+    }
 }

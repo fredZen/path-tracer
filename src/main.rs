@@ -46,12 +46,12 @@ fn world() -> HitableList {
         Box::new(Sphere::new(
             Pos::new(1., 0., -1.),
             0.5,
-            Box::new(Metal::new(Col::new(0.8, 0.6, 0.2))),
+            Box::new(Metal::new(Col::new(0.8, 0.6, 0.2), 0.3)),
         )),
         Box::new(Sphere::new(
             Pos::new(-1., 0., -1.),
             0.5,
-            Box::new(Metal::new(Col::new(0.8, 0.8, 0.8))),
+            Box::new(Metal::new(Col::new(0.8, 0.8, 0.8), 0.1)),
         )),
     ])
 }
