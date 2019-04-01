@@ -7,6 +7,7 @@ use camera::Camera;
 use hitable::{HitRecord, Hitable, HitableList, Sphere};
 use ray::Ray;
 use vec3::{Col, Float, Pos, Vector};
+use rand::prelude::*;
 
 fn colour(r: &Ray, hitable: &Hitable) -> Col {
     if let Some(HitRecord { normal, .. }) = hitable.hit(r, 0., std::f32::MAX) {
@@ -36,16 +37,22 @@ fn as_u8(f: Float) -> u8 {
 fn main() {
     let nx = 200u16;
     let ny = 100u16;
+    let ns = 100u16;
+    let mut rng = thread_rng();
     let cam = Camera::new();
     let world = world();
 
     print!("P3\n{} {}\n255\n", nx, ny);
     for j in (0..ny).rev() {
         for i in 0..nx {
-            let u = Float::from(i) / Float::from(nx);
-            let v = Float::from(j) / Float::from(ny);
-            let r = cam.get_ray(u,v);
-            let col = colour(&r, &world);
+            let mut col = Col::zero();
+            for _ in 0..ns {
+                let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
+                let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
+                let r = cam.get_ray(u,v);
+                col += colour(&r, &world);
+            }
+            col /= Float::from(ns);
 
             let ir = as_u8(col.r());
             let ig = as_u8(col.g());

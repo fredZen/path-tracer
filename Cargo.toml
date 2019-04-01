@@ -5,4 +5,5 @@ authors = ["Frederic Merizen <frederic.merizen@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+rand = "0.6"
 regex = "1"

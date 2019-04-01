@@ -4,7 +4,7 @@ use crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
 pub struct Col(Vec3);
 
 impl Col {
-    fn zero() -> Col {
+    pub fn zero() -> Col {
         Col(Vec3::zero())
     }
 
