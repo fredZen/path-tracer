@@ -20,7 +20,7 @@ fn random_in_unit_sphere() -> Dir {
 }
 
 fn colour(r: &Ray, world: &Hitable) -> Col {
-    if let Some(HitRecord { p, normal, .. }) = world.hit(r, 0., std::f32::MAX) {
+    if let Some(HitRecord { p, normal, .. }) = world.hit(r, 0.001, std::f32::MAX) {
         let target = p + normal + random_in_unit_sphere();
         0.5 * colour(&Ray::new(p, target - p), world)
     } else {
