@@ -64,6 +64,7 @@ fn main() {
                 col += colour(&r, &world);
             }
             col /= Float::from(ns);
+            let col = Col::new(col.r().sqrt(), col.g().sqrt(), col.b().sqrt());
 
             let ir = as_u8(col.r());
             let ig = as_u8(col.g());
