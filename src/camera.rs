@@ -1,5 +1,5 @@
-use crate::vec3::{Dir, Float, Pos};
 use crate::ray::Ray;
+use crate::vec3::{Dir, Float, Pos};
 
 pub struct Camera {
     lower_left_corner: Dir,
@@ -19,6 +19,9 @@ impl Camera {
     }
 
     pub fn get_ray(&self, u: Float, v: Float) -> Ray {
-        Ray::new(self.origin, self.lower_left_corner + u * self.horizontal + v * self.vertical)
+        Ray::new(
+            self.origin,
+            self.lower_left_corner + u * self.horizontal + v * self.vertical,
+        )
     }
 }

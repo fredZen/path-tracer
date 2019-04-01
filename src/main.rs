@@ -1,28 +1,29 @@
 mod camera;
 mod hitable;
+mod material;
 mod ray;
 mod vec3;
 
 use camera::Camera;
-use hitable::{HitRecord, Hitable, HitableList, Sphere};
-use ray::Ray;
-use vec3::{Col, Dir, Float, Pos, Vector};
+use hitable::{Hitable, HitableList, Sphere};
+use material::{Lambertian, Scatter};
 use rand::prelude::*;
+use ray::Ray;
+use vec3::{Col, Float, Pos, Vector};
 
-fn random_in_unit_sphere() -> Dir {
-    let mut rng = thread_rng();
-    loop {
-        let p = 2. * Dir::new(rng.gen(), rng.gen(), rng.gen()) - Dir::new(1., 1., 1.);
-        if p.squared_length() < 1. {
-            return p;
+fn colour(r: &Ray, world: &Hitable, depth: u8) -> Col {
+    if let Some(rec) = world.hit(r, 0.001, std::f32::MAX) {
+        if depth < 50 {
+            if let Some(Scatter {
+                scattered,
+                attenuation,
+            }) = rec.mat.scatter(r, &rec)
+            {
+                return attenuation * colour(&scattered, world, depth + 1);
+            }
         }
-    }
-}
 
-fn colour(r: &Ray, world: &Hitable) -> Col {
-    if let Some(HitRecord { p, normal, .. }) = world.hit(r, 0.001, std::f32::MAX) {
-        let target = p + normal + random_in_unit_sphere();
-        0.5 * colour(&Ray::new(p, target - p), world)
+        return Col::zero();
     } else {
         let unit_direction = r.direction().unit_vector();
         let t = 0.5 * (unit_direction.y() + 1.);
@@ -32,8 +33,16 @@ fn colour(r: &Ray, world: &Hitable) -> Col {
 
 fn world() -> HitableList {
     HitableList::new(vec![
-        Box::new(Sphere::new(Pos::new(0., 0., -1.), 0.5)),
-        Box::new(Sphere::new(Pos::new(0., -100.5, -1.), 100.)),
+        Box::new(Sphere::new(
+            Pos::new(0., 0., -1.),
+            0.5,
+            Box::new(Lambertian::new(Col::new(0.8, 0.3, 0.3))),
+        )),
+        Box::new(Sphere::new(
+            Pos::new(0., -100.5, -1.),
+            100.,
+            Box::new(Lambertian::new(Col::new(0.8, 0.8, 0.))),
+        )),
     ])
 }
 
@@ -60,8 +69,8 @@ fn main() {
             for _ in 0..ns {
                 let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
                 let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
-                let r = cam.get_ray(u,v);
-                col += colour(&r, &world);
+                let r = cam.get_ray(u, v);
+                col += colour(&r, &world, 0);
             }
             col /= Float::from(ns);
             let col = Col::new(col.r().sqrt(), col.g().sqrt(), col.b().sqrt());
