@@ -6,7 +6,7 @@ mod vec3;
 
 use camera::Camera;
 use hitable::{Hitable, HitableList, Sphere};
-use material::{Lambertian, Scatter};
+use material::{Lambertian, Metal, Scatter};
 use rand::prelude::*;
 use ray::Ray;
 use vec3::{Col, Float, Pos, Vector};
@@ -42,6 +42,16 @@ fn world() -> HitableList {
             Pos::new(0., -100.5, -1.),
             100.,
             Box::new(Lambertian::new(Col::new(0.8, 0.8, 0.))),
+        )),
+        Box::new(Sphere::new(
+            Pos::new(1., 0., -1.),
+            0.5,
+            Box::new(Metal::new(Col::new(0.8, 0.6, 0.2))),
+        )),
+        Box::new(Sphere::new(
+            Pos::new(-1., 0., -1.),
+            0.5,
+            Box::new(Metal::new(Col::new(0.8, 0.8, 0.8))),
         )),
     ])
 }

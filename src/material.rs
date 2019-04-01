@@ -1,6 +1,8 @@
 mod lambertian;
+mod metal;
 
 pub use lambertian::Lambertian;
+pub use metal::Metal;
 
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
