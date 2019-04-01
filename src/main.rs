@@ -6,12 +6,23 @@ mod vec3;
 use camera::Camera;
 use hitable::{HitRecord, Hitable, HitableList, Sphere};
 use ray::Ray;
-use vec3::{Col, Float, Pos, Vector};
+use vec3::{Col, Dir, Float, Pos, Vector};
 use rand::prelude::*;
 
-fn colour(r: &Ray, hitable: &Hitable) -> Col {
-    if let Some(HitRecord { normal, .. }) = hitable.hit(r, 0., std::f32::MAX) {
-        0.5 * Col::new(normal.x() + 1., normal.y() + 1., normal.z() + 1.)
+fn random_in_unit_sphere() -> Dir {
+    let mut rng = thread_rng();
+    loop {
+        let p = 2. * Dir::new(rng.gen(), rng.gen(), rng.gen()) - Dir::new(1., 1., 1.);
+        if p.squared_length() < 1. {
+            return p;
+        }
+    }
+}
+
+fn colour(r: &Ray, world: &Hitable) -> Col {
+    if let Some(HitRecord { p, normal, .. }) = world.hit(r, 0., std::f32::MAX) {
+        let target = p + normal + random_in_unit_sphere();
+        0.5 * colour(&Ray::new(p, target - p), world)
     } else {
         let unit_direction = r.direction().unit_vector();
         let t = 0.5 * (unit_direction.y() + 1.);
