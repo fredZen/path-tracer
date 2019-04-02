@@ -13,13 +13,13 @@ use vec3::{Col, Float, Pos, Vector};
 
 fn colour(r: &Ray, world: &Hitable, depth: u8) -> Col {
     if let Some(rec) = world.hit(r, 0.001, std::f32::MAX) {
-        if depth < 50 {
+        if depth > 0 {
             if let Some(Scatter {
                 scattered,
                 attenuation,
             }) = rec.mat.scatter(r, &rec)
             {
-                return attenuation * colour(&scattered, world, depth + 1);
+                return attenuation * colour(&scattered, world, depth - 1);
             }
         }
 
@@ -68,6 +68,7 @@ fn main() {
     let nx = 200u16;
     let ny = 100u16;
     let ns = 100u16;
+    let depth = 50;
     let mut rng = thread_rng();
     let cam = Camera::new();
     let world = world();
@@ -80,7 +81,7 @@ fn main() {
                 let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
                 let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
                 let r = cam.get_ray(u, v);
-                col += colour(&r, &world, 0);
+                col += colour(&r, &world, depth);
             }
             col /= Float::from(ns);
             let col = Col::new(col.r().sqrt(), col.g().sqrt(), col.b().sqrt());
