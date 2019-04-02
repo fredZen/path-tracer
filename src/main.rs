@@ -53,6 +53,11 @@ fn world() -> HitableList {
             0.5,
             Box::new(Dielectric::new(1.9)),
         )),
+        Box::new(Sphere::new(
+            Pos::new(-1., 0., -1.),
+            -0.45,
+            Box::new(Dielectric::new(1.9)),
+        )),
     ])
 }
 

@@ -2,6 +2,7 @@ use super::{Material, Scatter, reflect};
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
 use crate::vec3::{Col, Dir, Float, Vector};
+use rand::prelude::*;
 
 pub struct Dielectric {
     ref_idx: Float
@@ -18,6 +19,12 @@ fn refract(v: Dir, n: Dir, ni_over_nt: Float) -> Option<Dir> {
     }
 }
 
+fn schlick(cosine: Float, ref_idx: Float) -> Float {
+    let r0 = (1.-ref_idx) / (1.+ref_idx);
+    let r0 = r0 * r0;
+    r0 + (1.-r0)*(1.-cosine).powi(5)
+}
+
 impl Dielectric {
     pub fn new(ri: Float) -> Dielectric {
         Dielectric{ ref_idx: ri }
@@ -29,19 +36,25 @@ impl Material for Dielectric {
         let attenuation = Col::new(1., 1., 1.);
         let outward_normal;
         let ni_over_nt;
+        let cosine;
         if r_in.direction().dot(rec.normal) > 0. {
             outward_normal = -rec.normal;
             ni_over_nt = self.ref_idx;
+            cosine = self.ref_idx * r_in.direction().dot(rec.normal) / r_in.direction().length();
         } else {
             outward_normal = rec.normal;
             ni_over_nt = 1. / self.ref_idx;
+            cosine = - r_in.direction().dot(rec.normal) / r_in.direction().length();
         }
         if let Some(refracted) = refract(r_in.direction(), outward_normal, ni_over_nt) {
-            Some(Scatter{attenuation, scattered: Ray::new(rec.p, refracted)})
-        } else {
-            let reflected = reflect(r_in.direction(), rec.normal);
-            Some(Scatter{attenuation, scattered: Ray::new(rec.p, reflected)})
+            let reflect_prob = schlick(cosine, self.ref_idx);
+
+            if thread_rng().gen::<Float>() > reflect_prob {
+                return Some(Scatter{attenuation, scattered: Ray::new(rec.p, refracted)})
+            }
         }
+        let reflected = reflect(r_in.direction(), rec.normal);
+        Some(Scatter{attenuation, scattered: Ray::new(rec.p, reflected)})
     }
 }
 
