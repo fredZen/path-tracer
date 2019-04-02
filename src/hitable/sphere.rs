@@ -38,6 +38,7 @@ impl Hitable for Sphere {
                 });
             }
             let t = (-b + discriminant.sqrt()) / a;
+            let p = r.point_at(t);
             if t_min < t && t < t_max {
                 return Some(HitRecord {
                     t,
