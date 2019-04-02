@@ -1,5 +1,6 @@
 use crate::vec3::{Dir, Float, Pos};
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct Ray {
     a: Pos,
     b: Dir,

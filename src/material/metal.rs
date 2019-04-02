@@ -1,7 +1,7 @@
-use super::{Material, Scatter, random_in_unit_sphere};
+use super::{Material, Scatter, random_in_unit_sphere, reflect};
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::{Col, Dir, Vector, Float};
+use crate::vec3::{Col, Vector, Float};
 
 pub struct Metal {
     albedo: Col,
@@ -12,10 +12,6 @@ impl Metal {
     pub fn new(albedo: Col, fuzz: Float) -> Self {
         Self { albedo, fuzz }
     }
-}
-
-fn reflect(v: Dir, n: Dir) -> Dir {
-    v - 2. * v.dot(n) * n
 }
 
 impl Material for Metal {

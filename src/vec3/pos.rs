@@ -4,7 +4,7 @@ use crate::vec3::{Dir, Float, ParseVec3Error, Vec3, Vector};
 pub struct Pos(Vec3);
 
 impl Pos {
-    fn zero() -> Self {
+    pub fn zero() -> Self {
         Self(Vec3::zero())
     }
 

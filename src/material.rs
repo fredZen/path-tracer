@@ -1,6 +1,8 @@
+mod dielectric;
 mod lambertian;
 mod metal;
 
+pub use dielectric::Dielectric;
 pub use lambertian::Lambertian;
 pub use metal::Metal;
 
@@ -26,4 +28,8 @@ fn random_in_unit_sphere() -> Dir {
             return p;
         }
     }
+}
+
+fn reflect(v: Dir, n: Dir) -> Dir {
+    v - 2. * v.dot(n) * n
 }
