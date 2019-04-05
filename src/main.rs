@@ -64,14 +64,6 @@ fn world() -> HitableList {
     ])
 }
 
-fn as_u8(f: Float) -> u8 {
-    if f < 1. {
-        (256. * f) as u8
-    } else {
-        255
-    }
-}
-
 fn render_once(nx:usize, ny:usize) -> Pixbuf {
     let depth = 50;
     let cam = Camera::new();
@@ -83,10 +75,9 @@ fn render_once(nx:usize, ny:usize) -> Pixbuf {
     for j in 0..ny {
         for i in 0..nx {
             let u = (i as Float + rng.gen::<Float>()) / (nx as Float);
-            let v = (j as Float + rng.gen::<Float>()) / (ny as Float);
+            let v = 1. - (j as Float + rng.gen::<Float>()) / (ny as Float);
             let r = cam.get_ray(u, v);
             let c = colour(&r, &world, depth);
-
             res.put(i, j, c);
         }
     }
@@ -106,28 +97,11 @@ fn render() -> Pixbuf {
             i1
         });
 
-    res.pixels.par_iter_mut().for_each(|c| *c /= ns as Float);
+    res /= ns;
 
     res
 }
 
-fn dump(pixbuf: Pixbuf) {
-    print!("P3\n{} {}\n255\n", pixbuf.w, pixbuf.h);
-    for j in (0..pixbuf.h).rev() {
-        for i in 0..pixbuf.w {
-            let c = pixbuf.get(i, j);
-            let col = Col::new(c.r().sqrt(), c.g().sqrt(), c.b().sqrt());
-
-            let ir = as_u8(col.r());
-            let ig = as_u8(col.g());
-            let ib = as_u8(col.b());
-
-            println!("{} {} {}", ir, ig, ib);
-        }
-    }
-}
-
 fn main() {
-    let pixbuf = render();
-    dump(pixbuf);
+    render().as_image().save("image.png").unwrap();
 }
