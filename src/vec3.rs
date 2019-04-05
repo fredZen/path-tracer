@@ -126,6 +126,12 @@ impl std::ops::Add for Vec3 {
     }
 }
 
+impl std::iter::Sum for Vec3 {
+    fn sum<I: Iterator<Item=Vec3>>(iter: I) -> Vec3 {
+        iter.fold(Vec3::zero(), |a, b| a + b)
+    }
+}
+
 impl std::ops::Sub for Vec3 {
     type Output = Vec3;
 

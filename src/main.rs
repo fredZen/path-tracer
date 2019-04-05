@@ -81,14 +81,14 @@ fn main() {
     print!("P3\n{} {}\n255\n", nx, ny);
     for j in (0..ny).rev() {
         for i in 0..nx {
-            let mut col = Col::zero();
-            for _ in 0..ns {
-                let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
-                let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
-                let r = cam.get_ray(u, v);
-                col += colour(&r, &world, depth);
-            }
-            col /= Float::from(ns);
+            let col = (0..ns)
+                .map(|_| {
+                    let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
+                    let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
+                    let r = cam.get_ray(u, v);
+                    colour(&r, &world, depth)
+                })
+                .sum::<Col>() / Float::from(ns);
             let col = Col::new(col.r().sqrt(), col.g().sqrt(), col.b().sqrt());
 
             let ir = as_u8(col.r());

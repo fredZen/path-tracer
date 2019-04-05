@@ -96,6 +96,12 @@ impl std::ops::Add for Col {
     }
 }
 
+impl std::iter::Sum for Col {
+    fn sum<I: Iterator<Item=Col>>(iter: I) -> Col {
+        Col(iter.map(|c| c.0).sum())
+    }
+}
+
 impl std::ops::Sub for Col {
     type Output = Self;
 
