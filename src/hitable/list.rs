@@ -3,11 +3,11 @@ use crate::ray::Ray;
 use crate::vec3::Float;
 
 pub struct HitableList {
-    list: Vec<Box<Hitable>>,
+    list: Vec<Box<Hitable + Send + Sync>>,
 }
 
 impl HitableList {
-    pub fn new(list: Vec<Box<Hitable>>) -> HitableList {
+    pub fn new(list: Vec<Box<Hitable + Send + Sync>>) -> HitableList {
         HitableList { list }
     }
 }

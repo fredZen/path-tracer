@@ -6,11 +6,11 @@ use crate::vec3::{Float, Pos, Vector};
 pub struct Sphere {
     center: Pos,
     radius: Float,
-    mat: Box<Material>,
+    mat: Box<Material + Send + Sync>,
 }
 
 impl Sphere {
-    pub fn new(center: Pos, radius: Float, mat: Box<Material>) -> Sphere {
+    pub fn new(center: Pos, radius: Float, mat: Box<Material + Sync + Send>) -> Sphere {
         Sphere {
             center,
             radius,

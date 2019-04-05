@@ -9,6 +9,7 @@ use hitable::{Hitable, HitableList, Sphere};
 use material::{Dielectric, Lambertian, Metal, Scatter};
 use rand::prelude::*;
 use ray::Ray;
+use rayon::prelude::*;
 use vec3::{Col, Float, Pos, Vector};
 
 fn colour(r: &Ray, world: &Hitable, depth: u8) -> Col {
@@ -74,7 +75,6 @@ fn main() {
     let ny = 100u16;
     let ns = 100u16;
     let depth = 50;
-    let mut rng = thread_rng();
     let cam = Camera::new();
     let world = world();
 
@@ -82,7 +82,9 @@ fn main() {
     for j in (0..ny).rev() {
         for i in 0..nx {
             let col = (0..ns)
+                .into_par_iter()
                 .map(|_| {
+                    let mut rng = thread_rng();
                     let u = (Float::from(i) + rng.gen::<Float>()) / Float::from(nx);
                     let v = (Float::from(j) + rng.gen::<Float>()) / Float::from(ny);
                     let r = cam.get_ray(u, v);
