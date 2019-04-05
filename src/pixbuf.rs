@@ -1,14 +1,14 @@
 use crate::vec3::Col;
 
-pub struct Image {
+pub struct Pixbuf {
     pub w: usize,
     pub h: usize,
-    pixels: Vec<Col>,
+    pub pixels: Vec<Col>,
 }
 
-impl Image {
-    pub fn new(w: usize, h: usize) -> Image {
-        Image{
+impl Pixbuf {
+    pub fn new(w: usize, h: usize) -> Pixbuf {
+        Pixbuf{
             w,
             h,
             pixels: vec![Col::zero(); w*h],
@@ -28,8 +28,8 @@ impl Image {
     }
 }
 
-impl std::ops::AddAssign for Image {
-    /// A bit of a wonky add_assign, since it only works for images with the same dimension,
+impl std::ops::AddAssign for Pixbuf {
+    /// A bit of a wonky add_assign, since it only works for pixbufs with the same dimension,
     /// which constitutes a strengthening of the preconditions. Out of the window goes Barbara
     /// Liskov. Sorry Barb.
     fn add_assign(&mut self, i: Self) {

@@ -1,14 +1,14 @@
 mod camera;
 mod hitable;
-mod image;
+mod pixbuf;
 mod material;
 mod ray;
 mod vec3;
 
 use camera::Camera;
 use hitable::{Hitable, HitableList, Sphere};
-use image::{Image};
 use material::{Dielectric, Lambertian, Metal, Scatter};
+use pixbuf::{Pixbuf};
 use rand::prelude::*;
 use ray::Ray;
 use rayon::prelude::*;
@@ -72,29 +72,20 @@ fn as_u8(f: Float) -> u8 {
     }
 }
 
-fn render() -> Image {
-    let nx = 200;
-    let ny = 100;
-    let ns = 100;
+fn render_once(nx:usize, ny:usize) -> Pixbuf {
     let depth = 50;
     let cam = Camera::new();
     let world = world();
 
-    let mut res = Image::new(nx, ny);
+    let mut res = Pixbuf::new(nx, ny);
+    let mut rng = thread_rng();
 
     for j in 0..ny {
         for i in 0..nx {
-            let c =
-                (0..ns)
-                .into_par_iter()
-                .map(|_| {
-                    let mut rng = thread_rng();
-                    let u = (i as Float + rng.gen::<Float>()) / (nx as Float);
-                    let v = (j as Float + rng.gen::<Float>()) / (ny as Float);
-                    let r = cam.get_ray(u, v);
-                    colour(&r, &world, depth)
-                })
-                .sum::<Col>() / (ns as Float);
+            let u = (i as Float + rng.gen::<Float>()) / (nx as Float);
+            let v = (j as Float + rng.gen::<Float>()) / (ny as Float);
+            let r = cam.get_ray(u, v);
+            let c = colour(&r, &world, depth);
 
             res.put(i, j, c);
         }
@@ -103,11 +94,28 @@ fn render() -> Image {
     res
 }
 
-fn dump(image: Image) {
-    print!("P3\n{} {}\n255\n", image.w, image.h);
-    for j in (0..image.h).rev() {
-        for i in 0..image.w {
-            let c = image.get(i, j);
+fn render() -> Pixbuf {
+    let nx = 200;
+    let ny = 100;
+    let ns = 100;
+
+    let mut res = (0..ns).into_par_iter()
+        .map(|_| render_once(nx, ny))
+        .reduce(|| Pixbuf::new(nx, ny), |mut i1, i2| {
+            i1 += i2;
+            i1
+        });
+
+    res.pixels.par_iter_mut().for_each(|c| *c /= ns as Float);
+
+    res
+}
+
+fn dump(pixbuf: Pixbuf) {
+    print!("P3\n{} {}\n255\n", pixbuf.w, pixbuf.h);
+    for j in (0..pixbuf.h).rev() {
+        for i in 0..pixbuf.w {
+            let c = pixbuf.get(i, j);
             let col = Col::new(c.r().sqrt(), c.g().sqrt(), c.b().sqrt());
 
             let ir = as_u8(col.r());
@@ -120,6 +128,6 @@ fn dump(image: Image) {
 }
 
 fn main() {
-    let image = render();
-    dump(image);
+    let pixbuf = render();
+    dump(pixbuf);
 }
