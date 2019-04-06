@@ -3,18 +3,18 @@ mod hitable;
 mod pixbuf;
 mod material;
 mod ray;
+mod scene;
 mod vec3;
 
-use camera::Camera;
-use hitable::{Hitable, HitableList, Sphere};
-use material::{Dielectric, Lambertian, Metal, Scatter};
+use hitable::{Hitable};
+use material::Scatter;
 use pixbuf::{Pixbuf};
 use rand::prelude::*;
 use ray::Ray;
 use rayon::prelude::*;
-use vec3::{Col, Float, Pos, Vector};
+use vec3::{Col, Float, Vector};
 
-fn colour(r: &Ray, world: &Hitable, depth: u8) -> Col {
+fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
     if let Some(rec) = world.hit(r, 0.001, std::f32::MAX) {
         if depth > 0 {
             if let Some(Scatter {
@@ -34,50 +34,18 @@ fn colour(r: &Ray, world: &Hitable, depth: u8) -> Col {
     }
 }
 
-fn world() -> HitableList {
-    HitableList::new(vec![
-        Box::new(Sphere::new(
-            Pos::new(0., 0., -1.),
-            0.5,
-            Box::new(Lambertian::new(Col::new(0.1, 0.2, 0.5))),
-        )),
-        Box::new(Sphere::new(
-            Pos::new(0., -100.5, -1.),
-            100.,
-            Box::new(Lambertian::new(Col::new(0.8, 0.8, 0.))),
-        )),
-        Box::new(Sphere::new(
-            Pos::new(1., 0., -1.),
-            0.5,
-            Box::new(Metal::new(Col::new(0.8, 0.6, 0.2), 0.)),
-        )),
-        Box::new(Sphere::new(
-            Pos::new(-1., 0., -1.),
-            0.5,
-            Box::new(Dielectric::new(1.9)),
-        )),
-        Box::new(Sphere::new(
-            Pos::new(-1., 0., -1.),
-            -0.45,
-            Box::new(Dielectric::new(1.9)),
-        )),
-    ])
-}
-
-fn render_once(nx:usize, ny:usize) -> Pixbuf {
-    let depth = 50;
-    let cam = Camera::new();
-    let world = world();
-
-    let mut res = Pixbuf::new(nx, ny);
+fn render_once<T: Hitable + Send + Sync>(scene: &scene::Scene<T>) -> Pixbuf {
+    let &scene::Scene{width, height, depth, ..} = scene;
+    let scene::Scene{world, camera, ..} = scene;
+    let mut res = Pixbuf::new(width, height);
     let mut rng = thread_rng();
 
-    for j in 0..ny {
-        for i in 0..nx {
-            let u = (i as Float + rng.gen::<Float>()) / (nx as Float);
-            let v = 1. - (j as Float + rng.gen::<Float>()) / (ny as Float);
-            let r = cam.get_ray(u, v);
-            let c = colour(&r, &world, depth);
+    for j in 0..height {
+        for i in 0..width {
+            let u = (i as Float + rng.gen::<Float>()) / (width as Float);
+            let v = 1. - (j as Float + rng.gen::<Float>()) / (height as Float);
+            let r = camera.get_ray(u, v);
+            let c = colour(&r, world, depth);
             res.put(i, j, c);
         }
     }
@@ -86,18 +54,17 @@ fn render_once(nx:usize, ny:usize) -> Pixbuf {
 }
 
 fn render() -> Pixbuf {
-    let nx = 200;
-    let ny = 100;
-    let ns = 100;
+    let scene = scene::scene();
+    let scene::Scene{samples, width, height, ..} = scene;
 
-    let mut res = (0..ns).into_par_iter()
-        .map(|_| render_once(nx, ny))
-        .reduce(|| Pixbuf::new(nx, ny), |mut i1, i2| {
+    let mut res = (0..samples).into_par_iter()
+        .map(|_| render_once(&scene))
+        .reduce(|| Pixbuf::new(width, height), |mut i1, i2| {
             i1 += i2;
             i1
         });
 
-    res /= ns;
+    res /= samples;
 
     res
 }
