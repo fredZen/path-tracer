@@ -14,6 +14,7 @@ use ray::Ray;
 use rayon::prelude::*;
 use vec3::{Col, Float, Vector};
 
+#[inline]
 fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
     if let Some(rec) = world.hit(r, 0.001, std::f32::MAX) {
         if depth > 0 {
