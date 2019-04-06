@@ -1,7 +1,7 @@
 use crate::camera::Camera;
 use crate::hitable::{Hitable, HitableList, Sphere};
 use crate::material::{Dielectric, Lambertian, Metal};
-use crate::vec3::{Col, Dir, Float, Pos};
+use crate::vec3::{Col, Dir, Float, Pos, Vector};
 use std::f32::consts::*;
 
 pub struct Scene<H: Hitable + Send + Sync> {
@@ -14,12 +14,17 @@ pub struct Scene<H: Hitable + Send + Sync> {
 }
 
 fn camera(aspect: Float) -> Camera {
+    let look_from = Pos::new(3., 3., 2.);
+    let look_at = Pos::new(0., 0., -1.);
+    let focus_dist = (look_at - look_from).length();
     Camera::new(
-        Pos::new(-2., 2., 1.),
-        Pos::new(0., 0., -1.),
+        look_from,
+        look_at,
         Dir::new(0., 1., 0.),
         20.,
         aspect,
+        2.,
+        focus_dist,
     )
 }
 
