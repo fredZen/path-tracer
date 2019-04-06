@@ -34,18 +34,19 @@ impl Dielectric {
 impl Material for Dielectric {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<Scatter> {
         let attenuation = Col::new(1., 1., 1.);
-        let outward_normal;
-        let ni_over_nt;
-        let cosine;
-        if r_in.direction().dot(rec.normal) > 0. {
-            outward_normal = -rec.normal;
-            ni_over_nt = self.ref_idx;
-            cosine = self.ref_idx * r_in.direction().dot(rec.normal) / r_in.direction().length();
+        let (outward_normal, ni_over_nt, cosine) = if r_in.direction().dot(rec.normal) > 0. {
+            (
+                -rec.normal,
+                self.ref_idx,
+                self.ref_idx * r_in.direction().dot(rec.normal) / r_in.direction().length(),
+            )
         } else {
-            outward_normal = rec.normal;
-            ni_over_nt = 1. / self.ref_idx;
-            cosine = -r_in.direction().dot(rec.normal) / r_in.direction().length();
-        }
+            (
+                rec.normal,
+                1. / self.ref_idx,
+                -r_in.direction().dot(rec.normal) / r_in.direction().length(),
+            )
+        };
         if let Some(refracted) = refract(r_in.direction(), outward_normal, ni_over_nt) {
             let reflect_prob = schlick(cosine, self.ref_idx);
 

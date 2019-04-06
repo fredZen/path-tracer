@@ -17,36 +17,35 @@ impl Sphere {
             mat,
         }
     }
+
+    #[inline]
+    fn hit_record(&self, r: &Ray, t: Float) -> HitRecord {
+        let p = r.point_at(t);
+        HitRecord {
+            t,
+            p,
+            normal: (p - self.center) / self.radius,
+            mat: &*self.mat,
+        }
+    }
 }
 
 impl Hitable for Sphere {
     #[inline]
-    fn hit(&self, r: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
-        let oc = r.origin() - self.center;
-        let a = r.direction().dot(r.direction());
-        let b = oc.dot(r.direction());
-        let c = oc.dot(oc) - self.radius * self.radius;
+    fn hit(&self, ray: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
+        let oc = ray.origin() - self.center;
+        let a = ray.direction().squared_length();
+        let b = oc.dot(ray.direction());
+        let c = oc.squared_length() - self.radius * self.radius;
         let discriminant = b * b - a * c;
         if discriminant > 0. {
             let t = (-b - discriminant.sqrt()) / a;
-            let p = r.point_at(t);
             if t_min < t && t < t_max {
-                return Some(HitRecord {
-                    t,
-                    p,
-                    normal: (p - self.center) / self.radius,
-                    mat: &*self.mat,
-                });
+                return Some(self.hit_record(ray, t));
             }
             let t = (-b + discriminant.sqrt()) / a;
-            let p = r.point_at(t);
             if t_min < t && t < t_max {
-                return Some(HitRecord {
-                    t,
-                    p,
-                    normal: (p - self.center) / self.radius,
-                    mat: &*self.mat,
-                });
+                return Some(self.hit_record(ray, t));
             }
         }
         None
