@@ -1,7 +1,7 @@
 use crate::camera::Camera;
 use crate::hitable::{Hitable, HitableList, Sphere};
 use crate::material::{Dielectric, Lambertian, Metal};
-use crate::vec3::{Col, Float, Pos};
+use crate::vec3::{Col, Dir, Float, Pos};
 use std::f32::consts::*;
 
 pub struct Scene<H: Hitable + Send + Sync> {
@@ -14,7 +14,13 @@ pub struct Scene<H: Hitable + Send + Sync> {
 }
 
 fn camera(aspect: Float) -> Camera {
-    Camera::new(90., aspect)
+    Camera::new(
+        Pos::new(-2., 2., 1.),
+        Pos::new(0., 0., -1.),
+        Dir::new(0., 1., 0.),
+        20.,
+        aspect,
+    )
 }
 
 fn small_world() -> HitableList {
@@ -69,7 +75,7 @@ pub fn scene() -> Scene<HitableList> {
     let samples = 100;
     let depth = 50;
     let camera = camera((width as Float) / (height as Float));
-    let world = small_world();
+    let world = world();
     Scene {
         width,
         height,
