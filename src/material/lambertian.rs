@@ -1,4 +1,4 @@
-use super::{Material, Scatter, random_in_unit_sphere};
+use super::{random_in_unit_sphere, Material, Scatter};
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
 use crate::vec3::Col;

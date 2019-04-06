@@ -1,14 +1,14 @@
 mod camera;
 mod hitable;
-mod pixbuf;
 mod material;
+mod pixbuf;
 mod ray;
 mod scene;
 mod vec3;
 
-use hitable::{Hitable};
+use hitable::Hitable;
 use material::Scatter;
-use pixbuf::{Pixbuf};
+use pixbuf::Pixbuf;
 use rand::prelude::*;
 use ray::Ray;
 use rayon::prelude::*;
@@ -36,8 +36,13 @@ fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
 }
 
 fn render_once<T: Hitable + Send + Sync>(scene: &scene::Scene<T>) -> Pixbuf {
-    let &scene::Scene{width, height, depth, ..} = scene;
-    let scene::Scene{world, camera, ..} = scene;
+    let &scene::Scene {
+        width,
+        height,
+        depth,
+        ..
+    } = scene;
+    let scene::Scene { world, camera, .. } = scene;
     let mut res = Pixbuf::new(width, height);
     let mut rng = thread_rng();
 
@@ -56,14 +61,23 @@ fn render_once<T: Hitable + Send + Sync>(scene: &scene::Scene<T>) -> Pixbuf {
 
 fn render() -> Pixbuf {
     let scene = scene::scene();
-    let scene::Scene{samples, width, height, ..} = scene;
+    let scene::Scene {
+        samples,
+        width,
+        height,
+        ..
+    } = scene;
 
-    let mut res = (0..samples).into_par_iter()
+    let mut res = (0..samples)
+        .into_par_iter()
         .map(|_| render_once(&scene))
-        .reduce(|| Pixbuf::new(width, height), |mut i1, i2| {
-            i1 += i2;
-            i1
-        });
+        .reduce(
+            || Pixbuf::new(width, height),
+            |mut i1, i2| {
+                i1 += i2;
+                i1
+            },
+        );
 
     res /= samples;
 

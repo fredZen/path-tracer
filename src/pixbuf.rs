@@ -18,10 +18,10 @@ fn as_u8(f: Float) -> u8 {
 
 impl Pixbuf {
     pub fn new(w: usize, h: usize) -> Pixbuf {
-        Pixbuf{
+        Pixbuf {
             w,
             h,
-            pixels: vec![Col::zero(); w*h],
+            pixels: vec![Col::zero(); w * h],
         }
     }
 

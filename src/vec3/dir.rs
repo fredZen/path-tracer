@@ -97,7 +97,7 @@ impl std::ops::Add for Dir {
 }
 
 impl std::iter::Sum for Dir {
-    fn sum<I: Iterator<Item=Dir>>(iter: I) -> Dir {
+    fn sum<I: Iterator<Item = Dir>>(iter: I) -> Dir {
         Dir(iter.map(|d| d.0).sum())
     }
 }
