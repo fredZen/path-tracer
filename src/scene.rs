@@ -1,6 +1,6 @@
 use crate::camera::Camera;
 use crate::hitable::{hitable_list, sphere, HitableBox};
-use crate::material::{Dielectric, Lambertian, Metal};
+use crate::material::{dielectric, lambertian, metal};
 use crate::vec3::{Col, Dir, Float, Pos, Vector};
 use std::f32::consts::*;
 
@@ -31,16 +31,8 @@ fn camera(aspect: Float) -> Camera {
 fn small_world() -> HitableBox {
     let r = (PI / 4.).cos();
     hitable_list(vec![
-        sphere(
-            Pos::new(-r, 0., -1.),
-            r,
-            Box::new(Lambertian::new(Col::new(0., 0., 1.))),
-        ),
-        sphere(
-            Pos::new(r, 0., -1.),
-            r,
-            Box::new(Lambertian::new(Col::new(1., 0., 0.))),
-        ),
+        sphere(Pos::new(-r, 0., -1.), r, lambertian(Col::new(0., 0., 1.))),
+        sphere(Pos::new(r, 0., -1.), r, lambertian(Col::new(1., 0., 0.))),
     ])
 }
 
@@ -49,24 +41,20 @@ fn world() -> HitableBox {
         sphere(
             Pos::new(0., 0., -1.),
             0.5,
-            Box::new(Lambertian::new(Col::new(0.1, 0.2, 0.5))),
+            lambertian(Col::new(0.1, 0.2, 0.5)),
         ),
         sphere(
             Pos::new(0., -100.5, -1.),
             100.,
-            Box::new(Lambertian::new(Col::new(0.8, 0.8, 0.))),
+            lambertian(Col::new(0.8, 0.8, 0.)),
         ),
         sphere(
             Pos::new(1., 0., -1.),
             0.5,
-            Box::new(Metal::new(Col::new(0.8, 0.6, 0.2), 0.)),
+            metal(Col::new(0.8, 0.6, 0.2), 0.),
         ),
-        sphere(Pos::new(-1., 0., -1.), 0.5, Box::new(Dielectric::new(1.9))),
-        sphere(
-            Pos::new(-1., 0., -1.),
-            -0.45,
-            Box::new(Dielectric::new(1.9)),
-        ),
+        sphere(Pos::new(-1., 0., -1.), 0.5, dielectric(1.9)),
+        sphere(Pos::new(-1., 0., -1.), -0.45, dielectric(1.9)),
     ])
 }
 

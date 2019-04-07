@@ -2,13 +2,9 @@ mod dielectric;
 mod lambertian;
 mod metal;
 
-pub use dielectric::Dielectric;
-pub use lambertian::Lambertian;
-pub use metal::Metal;
-
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::{Col, Dir, Vector};
+use crate::vec3::{Col, Dir, Float, Vector};
 use rand::prelude::*;
 
 pub struct Scatter {
@@ -18,6 +14,20 @@ pub struct Scatter {
 
 pub trait Material {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<Scatter>;
+}
+
+pub type MaterialBox = Box<Material + Send + Sync>;
+
+pub fn dielectric(ri: Float) -> MaterialBox {
+    Box::new(dielectric::Dielectric::new(ri))
+}
+
+pub fn lambertian(albedo: Col) -> MaterialBox {
+    Box::new(lambertian::Lambertian::new(albedo))
+}
+
+pub fn metal(albedo: Col, fuzz: Float) -> MaterialBox {
+    Box::new(metal::Metal::new(albedo, fuzz))
 }
 
 fn random_in_unit_sphere() -> Dir {
