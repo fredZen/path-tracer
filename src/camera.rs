@@ -1,5 +1,5 @@
 use crate::ray::Ray;
-use crate::vec3::{Dir, Float, Pos, Vector};
+use crate::vec3::{dir, Dir, Float, Pos, Vector};
 use rand::prelude::*;
 use std::f32::consts::*;
 
@@ -16,7 +16,7 @@ pub struct Camera {
 fn random_in_unit_disk() -> Dir {
     let mut rng = thread_rng();
     loop {
-        let p = 2. * Dir::new(rng.gen(), rng.gen(), 0.) - Dir::new(1., 1., 0.);
+        let p = 2. * dir(rng.gen(), rng.gen(), 0.) - dir(1., 1., 0.);
         if p.squared_length() < 1. {
             return p;
         }
@@ -66,21 +66,22 @@ impl Camera {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::vec3::pos;
 
     #[test]
     fn test_camera_creation() {
         let cam = Camera::new(
             Pos::zero(),
-            Pos::new(0., 0., -1.),
-            Dir::new(0., 1., 0.),
+            pos(0., 0., -1.),
+            dir(0., 1., 0.),
             90.,
             2.,
             0.,
             1.,
         );
         assert_eq!(Pos::zero(), cam.origin);
-        assert_eq!(Pos::new(-2., -1., -1.), cam.lower_left_corner);
-        assert_eq!(Dir::new(4., 0., 0.), cam.horizontal);
-        assert_eq!(Dir::new(0., 2., 0.), cam.vertical);
+        assert_eq!(pos(-2., -1., -1.), cam.lower_left_corner);
+        assert_eq!(dir(4., 0., 0.), cam.horizontal);
+        assert_eq!(dir(0., 2., 0.), cam.vertical);
     }
 }

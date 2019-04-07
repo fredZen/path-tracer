@@ -4,12 +4,8 @@ use crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
 pub struct Col(Vec3);
 
 impl Col {
-    pub fn zero() -> Col {
-        Col(Vec3::zero())
-    }
-
-    pub fn new(r: Float, g: Float, b: Float) -> Col {
-        Col(Vec3::new(r, g, b))
+    pub fn zero() -> Self {
+        Self(Vec3::zero())
     }
 
     pub fn r(self) -> Float {
@@ -23,6 +19,10 @@ impl Col {
     pub fn b(self) -> Float {
         self.0[2]
     }
+}
+
+pub fn col(r: Float, g: Float, b: Float) -> Col {
+    Col(Vec3::new(r, g, b))
 }
 
 impl Vector for Col {

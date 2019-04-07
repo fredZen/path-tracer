@@ -8,10 +8,6 @@ impl Dir {
         Self(Vec3::zero())
     }
 
-    pub fn new(x: Float, y: Float, z: Float) -> Self {
-        Self(Vec3::new(x, y, z))
-    }
-
     pub fn x(self) -> Float {
         self.0[0]
     }
@@ -23,6 +19,10 @@ impl Dir {
     pub fn z(self) -> Float {
         self.0[2]
     }
+}
+
+pub fn dir(x: Float, y: Float, z: Float) -> Dir {
+    Dir(Vec3::new(x, y, z))
 }
 
 impl Vector for Dir {

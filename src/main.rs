@@ -12,7 +12,7 @@ use pixbuf::Pixbuf;
 use rand::prelude::*;
 use ray::Ray;
 use rayon::prelude::*;
-use vec3::{Col, Float, Vector};
+use vec3::{col, Col, Float, Vector};
 
 #[inline]
 fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
@@ -31,7 +31,7 @@ fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
     } else {
         let unit_direction = r.direction().unit_vector();
         let t = 0.5 * (unit_direction.y() + 1.);
-        (1. - t) * Col::new(1., 1., 1.) + t * Col::new(0.5, 0.7, 1.0)
+        (1. - t) * col(1., 1., 1.) + t * col(0.5, 0.7, 1.0)
     }
 }
 

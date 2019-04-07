@@ -1,7 +1,7 @@
 use super::{reflect, Material, Scatter};
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::{Col, Dir, Float, Vector};
+use crate::vec3::{col, Dir, Float, Vector};
 use rand::prelude::*;
 
 pub struct Dielectric {
@@ -33,7 +33,7 @@ impl Dielectric {
 
 impl Material for Dielectric {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<Scatter> {
-        let attenuation = Col::new(1., 1., 1.);
+        let attenuation = col(1., 1., 1.);
         let (outward_normal, ni_over_nt, cosine) = if r_in.direction().dot(rec.normal) > 0. {
             (
                 -rec.normal,
@@ -68,12 +68,13 @@ impl Material for Dielectric {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::vec3::{dir, pos};
     use assert_approx_eq::assert_approx_eq;
 
     #[test]
     fn test_refract_no_change() {
-        let v1 = Dir::new(1., 1., 0.);
-        let n = Dir::new(0., -1., 0.);
+        let v1 = dir(1., 1., 0.);
+        let n = dir(0., -1., 0.);
         let v2 = v1.unit_vector();
         let refracted = refract(v1, n, 1.);
         assert!(refracted.is_some());
@@ -85,9 +86,9 @@ mod tests {
 
     #[test]
     fn test_refract() {
-        let v1 = Dir::new(0.5, 3f32.sqrt() / 2., 0.);
-        let v2 = Dir::new(1., 1., 0.).unit_vector();
-        let n = Dir::new(0., -1., 0.);
+        let v1 = dir(0.5, 3f32.sqrt() / 2., 0.);
+        let v2 = dir(1., 1., 0.).unit_vector();
+        let n = dir(0., -1., 0.);
 
         let refracted = refract(v1, n, 2f32.sqrt());
         assert!(refracted.is_some());
@@ -100,12 +101,12 @@ mod tests {
     #[test]
     fn test_dielectric_refract_entering() {
         use crate::vec3::Pos;
-        let r_in = Ray::new(Pos::zero(), Dir::new(1., 1., 0.).unit_vector());
+        let r_in = Ray::new(Pos::zero(), dir(1., 1., 0.).unit_vector());
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {
             t: 1.,
-            p: Pos::new(1., 1., 0.),
-            normal: Dir::new(0., -1., 0.),
+            p: pos(1., 1., 0.),
+            normal: dir(0., -1., 0.),
             mat: &mat,
         };
 
@@ -113,7 +114,7 @@ mod tests {
         assert!(scatter.is_some());
         let scattered = scatter.unwrap().scattered.direction();
 
-        let v2 = Dir::new(0.5, 3f32.sqrt() / 2., 0.);
+        let v2 = dir(0.5, 3f32.sqrt() / 2., 0.);
         assert_approx_eq!(v2.x(), scattered.x());
         assert_approx_eq!(v2.y(), scattered.y());
         assert_approx_eq!(v2.z(), scattered.z());
@@ -122,12 +123,12 @@ mod tests {
     #[test]
     fn test_dielectric_refract_exiting() {
         use crate::vec3::Pos;
-        let r_in = Ray::new(Pos::zero(), Dir::new(0.5, 3f32.sqrt() / 2., 0.));
+        let r_in = Ray::new(Pos::zero(), dir(0.5, 3f32.sqrt() / 2., 0.));
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {
             t: 1.,
-            p: Pos::new(0.5, 3f32.sqrt() / 2., 0.),
-            normal: Dir::new(0., 1., 0.),
+            p: pos(0.5, 3f32.sqrt() / 2., 0.),
+            normal: dir(0., 1., 0.),
             mat: &mat,
         };
 
@@ -135,7 +136,7 @@ mod tests {
         assert!(scatter.is_some());
         let scattered = scatter.unwrap().scattered.direction();
 
-        let v2 = Dir::new(1., 1., 0.).unit_vector();
+        let v2 = dir(1., 1., 0.).unit_vector();
         assert_approx_eq!(v2.x(), scattered.x());
         assert_approx_eq!(v2.y(), scattered.y());
         assert_approx_eq!(v2.z(), scattered.z());

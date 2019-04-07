@@ -1,4 +1,4 @@
-use crate::vec3::{Col, Float};
+use crate::vec3::{col, Col, Float};
 use image::{ImageBuffer, Rgb};
 use rayon::prelude::*;
 
@@ -41,7 +41,7 @@ impl Pixbuf {
         let mut img = ImageBuffer::new(self.w as u32, self.h as u32);
         for (i, j, p) in img.enumerate_pixels_mut() {
             let c = self.get(i as usize, j as usize);
-            let col = Col::new(c.r().sqrt(), c.g().sqrt(), c.b().sqrt());
+            let col = col(c.r().sqrt(), c.g().sqrt(), c.b().sqrt());
 
             let ir = as_u8(col.r());
             let ig = as_u8(col.g());

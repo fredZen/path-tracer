@@ -4,7 +4,7 @@ mod metal;
 
 use crate::hitable::HitRecord;
 use crate::ray::Ray;
-use crate::vec3::{Col, Dir, Float, Vector};
+use crate::vec3::{dir, Col, Dir, Float, Vector};
 use rand::prelude::*;
 
 pub struct Scatter {
@@ -33,7 +33,7 @@ pub fn metal(albedo: Col, fuzz: Float) -> MaterialBox {
 fn random_in_unit_sphere() -> Dir {
     let mut rng = thread_rng();
     loop {
-        let p = 2. * Dir::new(rng.gen(), rng.gen(), rng.gen()) - Dir::new(1., 1., 1.);
+        let p = 2. * dir(rng.gen(), rng.gen(), rng.gen()) - dir(1., 1., 1.);
         if p.squared_length() < 1. {
             return p;
         }

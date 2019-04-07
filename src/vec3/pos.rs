@@ -8,10 +8,6 @@ impl Pos {
         Self(Vec3::zero())
     }
 
-    pub fn new(x: Float, y: Float, z: Float) -> Self {
-        Self(Vec3::new(x, y, z))
-    }
-
     fn x(self) -> Float {
         self.0[0]
     }
@@ -23,6 +19,10 @@ impl Pos {
     fn z(self) -> Float {
         self.0[2]
     }
+}
+
+pub fn pos(x: Float, y: Float, z: Float) -> Pos {
+    Pos(Vec3::new(x, y, z))
 }
 
 impl Vector for Pos {
