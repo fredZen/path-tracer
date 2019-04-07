@@ -1,9 +1,7 @@
 mod list;
 mod sphere;
 
-use crate::material::Material;
 use crate::prelude::*;
-use crate::ray::Ray;
 
 pub struct HitRecord<'a> {
     pub t: Float,

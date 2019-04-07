@@ -1,7 +1,5 @@
-use super::{random_in_unit_sphere, reflect, Material, Scatter};
-use crate::hitable::HitRecord;
+use super::{random_in_unit_sphere, reflect};
 use crate::prelude::*;
-use crate::ray::Ray;
 
 pub struct Metal {
     albedo: Col,

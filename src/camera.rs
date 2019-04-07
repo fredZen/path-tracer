@@ -1,7 +1,5 @@
 use crate::prelude::*;
-use crate::ray::Ray;
 use rand::prelude::*;
-use std::f32::consts::*;
 
 pub struct Camera {
     lower_left_corner: Pos,

@@ -1,7 +1,5 @@
-use super::{reflect, Material, Scatter};
-use crate::hitable::HitRecord;
+use super::reflect;
 use crate::prelude::*;
-use crate::ray::Ray;
 use rand::prelude::*;
 
 pub struct Dielectric {

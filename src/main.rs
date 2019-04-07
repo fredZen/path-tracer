@@ -7,12 +7,9 @@ mod ray;
 mod scene;
 mod vec3;
 
-use hitable::Hitable;
-use material::Scatter;
 use pixbuf::Pixbuf;
 use prelude::*;
 use rand::prelude::*;
-use ray::Ray;
 use rayon::prelude::*;
 
 #[inline]

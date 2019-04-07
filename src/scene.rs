@@ -2,7 +2,7 @@ use crate::camera::Camera;
 use crate::hitable::{hitable_list, sphere, HitableBox};
 use crate::material::{dielectric, lambertian, metal};
 use crate::prelude::*;
-use std::f32::consts::*;
+use rand::prelude::*;
 
 pub struct Scene {
     pub camera: Camera,

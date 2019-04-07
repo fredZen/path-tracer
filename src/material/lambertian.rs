@@ -1,7 +1,5 @@
-use super::{random_in_unit_sphere, Material, Scatter};
-use crate::hitable::HitRecord;
+use super::random_in_unit_sphere;
 use crate::prelude::*;
-use crate::ray::Ray;
 
 pub struct Lambertian {
     albedo: Col,

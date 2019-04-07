@@ -1,7 +1,4 @@
-use super::{HitRecord, Hitable};
-use crate::material::Material;
 use crate::prelude::*;
-use crate::ray::Ray;
 
 pub struct Sphere {
     center: Pos,

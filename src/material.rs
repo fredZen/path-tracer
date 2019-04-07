@@ -2,9 +2,7 @@ mod dielectric;
 mod lambertian;
 mod metal;
 
-use crate::hitable::HitRecord;
 use crate::prelude::*;
-use crate::ray::Ray;
 use rand::prelude::*;
 
 pub struct Scatter {

@@ -1,6 +1,4 @@
-use super::{HitRecord, Hitable};
 use crate::prelude::*;
-use crate::ray::Ray;
 
 pub struct HitableList {
     list: Vec<Box<Hitable + Send + Sync>>,
