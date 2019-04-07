@@ -1,7 +1,7 @@
 use super::{HitRecord, Hitable};
 use crate::material::Material;
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{Float, Pos, Vector};
 
 pub struct Sphere {
     center: Pos,

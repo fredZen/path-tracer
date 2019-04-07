@@ -1,4 +1,4 @@
-use crate::vec3::{Dir, Float, Pos};
+use crate::prelude::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Ray {

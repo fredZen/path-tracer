@@ -1,5 +1,5 @@
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{dir, Dir, Float, Pos, Vector};
 use rand::prelude::*;
 use std::f32::consts::*;
 
@@ -66,7 +66,6 @@ impl Camera {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::vec3::pos;
 
     #[test]
     fn test_camera_creation() {

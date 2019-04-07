@@ -1,4 +1,5 @@
-use crate::vec3::{Dir, Float, ParseVec3Error, Vec3, Vector};
+use super::{ParseVec3Error, Vec3};
+use crate::prelude::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Pos(Vec3);
@@ -108,7 +109,7 @@ impl std::ops::Sub<Pos> for Pos {
     type Output = Dir;
 
     fn sub(self, o: Pos) -> Self::Output {
-        Dir(self.0 - o.0)
+        super::dir::Dir(self.0 - o.0)
     }
 }
 

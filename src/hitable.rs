@@ -2,8 +2,8 @@ mod list;
 mod sphere;
 
 use crate::material::Material;
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{Dir, Float, Pos};
 
 pub struct HitRecord<'a> {
     pub t: Float,

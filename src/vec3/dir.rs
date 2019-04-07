@@ -1,4 +1,5 @@
-use crate::vec3::{Float, ParseVec3Error, Vec3, Vector};
+use super::{ParseVec3Error, Vec3};
+use crate::prelude::*;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Dir(pub(super) Vec3);

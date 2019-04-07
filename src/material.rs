@@ -3,8 +3,8 @@ mod lambertian;
 mod metal;
 
 use crate::hitable::HitRecord;
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{dir, Col, Dir, Float, Vector};
 use rand::prelude::*;
 
 pub struct Scatter {

@@ -1,4 +1,4 @@
-use crate::vec3::{col, Col, Float};
+use crate::prelude::*;
 use image::{ImageBuffer, Rgb};
 use rayon::prelude::*;
 

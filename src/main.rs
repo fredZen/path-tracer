@@ -2,6 +2,7 @@ mod camera;
 mod hitable;
 mod material;
 mod pixbuf;
+mod prelude;
 mod ray;
 mod scene;
 mod vec3;
@@ -9,10 +10,10 @@ mod vec3;
 use hitable::Hitable;
 use material::Scatter;
 use pixbuf::Pixbuf;
+use prelude::*;
 use rand::prelude::*;
 use ray::Ray;
 use rayon::prelude::*;
-use vec3::{col, Col, Float, Vector};
 
 #[inline]
 fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {

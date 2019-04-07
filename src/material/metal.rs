@@ -1,7 +1,7 @@
 use super::{random_in_unit_sphere, reflect, Material, Scatter};
 use crate::hitable::HitRecord;
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{Col, Float, Vector};
 
 pub struct Metal {
     albedo: Col,

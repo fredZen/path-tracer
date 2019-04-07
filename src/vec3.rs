@@ -1,13 +1,9 @@
-mod col;
-mod dir;
-mod pos;
+pub mod col;
+pub mod dir;
+pub mod pos;
 
 #[cfg(test)]
 mod tests;
-
-pub use col::{col, Col};
-pub use dir::{dir, Dir};
-pub use pos::{pos, Pos};
 
 pub type Float = f32;
 

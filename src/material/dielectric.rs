@@ -1,7 +1,7 @@
 use super::{reflect, Material, Scatter};
 use crate::hitable::HitRecord;
+use crate::prelude::*;
 use crate::ray::Ray;
-use crate::vec3::{col, Dir, Float, Vector};
 use rand::prelude::*;
 
 pub struct Dielectric {
@@ -68,7 +68,6 @@ impl Material for Dielectric {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::vec3::{dir, pos};
     use assert_approx_eq::assert_approx_eq;
 
     #[test]
@@ -100,7 +99,6 @@ mod tests {
 
     #[test]
     fn test_dielectric_refract_entering() {
-        use crate::vec3::Pos;
         let r_in = Ray::new(Pos::zero(), dir(1., 1., 0.).unit_vector());
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {
@@ -122,7 +120,6 @@ mod tests {
 
     #[test]
     fn test_dielectric_refract_exiting() {
-        use crate::vec3::Pos;
         let r_in = Ray::new(Pos::zero(), dir(0.5, 3f32.sqrt() / 2., 0.));
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {

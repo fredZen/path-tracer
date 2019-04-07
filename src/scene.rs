@@ -1,7 +1,7 @@
 use crate::camera::Camera;
 use crate::hitable::{hitable_list, sphere, HitableBox};
 use crate::material::{dielectric, lambertian, metal};
-use crate::vec3::{col, dir, pos, Float, Vector};
+use crate::prelude::*;
 use std::f32::consts::*;
 
 pub struct Scene {
