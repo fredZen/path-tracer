@@ -1,12 +1,12 @@
 use crate::camera::Camera;
-use crate::hitable::{Hitable, HitableList, Sphere};
+use crate::hitable::{hitable_list, sphere, HitableBox};
 use crate::material::{Dielectric, Lambertian, Metal};
 use crate::vec3::{Col, Dir, Float, Pos, Vector};
 use std::f32::consts::*;
 
-pub struct Scene<H: Hitable + Send + Sync> {
+pub struct Scene {
     pub camera: Camera,
-    pub world: H,
+    pub world: HitableBox,
     pub width: usize,
     pub height: usize,
     pub samples: usize,
@@ -28,53 +28,49 @@ fn camera(aspect: Float) -> Camera {
     )
 }
 
-fn small_world() -> HitableList {
+fn small_world() -> HitableBox {
     let r = (PI / 4.).cos();
-    HitableList::new(vec![
-        Box::new(Sphere::new(
+    hitable_list(vec![
+        sphere(
             Pos::new(-r, 0., -1.),
             r,
             Box::new(Lambertian::new(Col::new(0., 0., 1.))),
-        )),
-        Box::new(Sphere::new(
+        ),
+        sphere(
             Pos::new(r, 0., -1.),
             r,
             Box::new(Lambertian::new(Col::new(1., 0., 0.))),
-        )),
+        ),
     ])
 }
 
-fn world() -> HitableList {
-    HitableList::new(vec![
-        Box::new(Sphere::new(
+fn world() -> HitableBox {
+    hitable_list(vec![
+        sphere(
             Pos::new(0., 0., -1.),
             0.5,
             Box::new(Lambertian::new(Col::new(0.1, 0.2, 0.5))),
-        )),
-        Box::new(Sphere::new(
+        ),
+        sphere(
             Pos::new(0., -100.5, -1.),
             100.,
             Box::new(Lambertian::new(Col::new(0.8, 0.8, 0.))),
-        )),
-        Box::new(Sphere::new(
+        ),
+        sphere(
             Pos::new(1., 0., -1.),
             0.5,
             Box::new(Metal::new(Col::new(0.8, 0.6, 0.2), 0.)),
-        )),
-        Box::new(Sphere::new(
-            Pos::new(-1., 0., -1.),
-            0.5,
-            Box::new(Dielectric::new(1.9)),
-        )),
-        Box::new(Sphere::new(
+        ),
+        sphere(Pos::new(-1., 0., -1.), 0.5, Box::new(Dielectric::new(1.9))),
+        sphere(
             Pos::new(-1., 0., -1.),
             -0.45,
             Box::new(Dielectric::new(1.9)),
-        )),
+        ),
     ])
 }
 
-pub fn scene() -> Scene<HitableList> {
+pub fn scene() -> Scene {
     let width = 200;
     let height = 100;
     let samples = 100;

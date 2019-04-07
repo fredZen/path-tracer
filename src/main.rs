@@ -35,7 +35,7 @@ fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
     }
 }
 
-fn render_once<T: Hitable + Send + Sync>(scene: &scene::Scene<T>) -> Pixbuf {
+fn render_once(scene: &scene::Scene) -> Pixbuf {
     let &scene::Scene {
         width,
         height,
@@ -51,7 +51,7 @@ fn render_once<T: Hitable + Send + Sync>(scene: &scene::Scene<T>) -> Pixbuf {
             let u = (i as Float + rng.gen::<Float>()) / (width as Float);
             let v = 1. - (j as Float + rng.gen::<Float>()) / (height as Float);
             let r = camera.get_ray(u, v);
-            let c = colour(&r, world, depth);
+            let c = colour(&r, &**world, depth);
             res.put(i, j, c);
         }
     }
