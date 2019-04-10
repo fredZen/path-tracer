@@ -51,14 +51,14 @@ impl Material for Dielectric {
             if thread_rng().gen::<Float>() > reflect_prob {
                 return Some(Scatter {
                     attenuation,
-                    scattered: Ray::new(rec.p, refracted),
+                    scattered: Ray::new(rec.p, refracted, r_in.time()),
                 });
             }
         }
         let reflected = reflect(r_in.direction(), rec.normal);
         Some(Scatter {
             attenuation,
-            scattered: Ray::new(rec.p, reflected),
+            scattered: Ray::new(rec.p, reflected, r_in.time()),
         })
     }
 }
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn test_dielectric_refract_entering() {
-        let r_in = Ray::new(Pos::zero(), dir(1., 1., 0.).unit_vector());
+        let r_in = Ray::new(Pos::zero(), dir(1., 1., 0.).unit_vector(), 0.);
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {
             t: 1.,
@@ -118,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_dielectric_refract_exiting() {
-        let r_in = Ray::new(Pos::zero(), dir(0.5, 3f32.sqrt() / 2., 0.));
+        let r_in = Ray::new(Pos::zero(), dir(0.5, 3f32.sqrt() / 2., 0.), 0.);
         let mat = Dielectric::new(2f32.sqrt());
         let rec = HitRecord {
             t: 1.,

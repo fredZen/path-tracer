@@ -1,15 +1,25 @@
-use super::Scene;
 use crate::camera::Camera;
 use crate::hitable::{hitable_list, sphere, HitableBox};
 use crate::material::{dielectric, lambertian, metal, MaterialBox};
 use crate::prelude::*;
+use crate::scene::Scene;
 use crate::Settings;
 use rand::prelude::*;
 
 fn camera(settings: &Settings) -> Camera {
     let look_from = pos(13., 2., 3.);
     let look_at = pos(0., 0., 0.);
-    super::camera(look_from, look_at, dir(0., 1., 0.), 20., 0.1, 10., settings)
+    crate::scene::camera(
+        look_from,
+        look_at,
+        dir(0., 1., 0.),
+        20.,
+        0.1,
+        10.,
+        settings,
+        0.,
+        0.,
+    )
 }
 
 fn world() -> HitableBox {

@@ -9,6 +9,8 @@ pub struct Camera {
     u: Dir,
     v: Dir,
     lens_radius: Float,
+    time0: Float,
+    time1: Float,
 }
 
 fn random_in_unit_disk() -> Dir {
@@ -31,6 +33,8 @@ impl Camera {
         aspect: Float,
         aperture: Float,
         focus_dist: Float,
+        t0: Float,
+        t1: Float,
     ) -> Camera {
         let theta = vfov * PI / 180. / 2.;
         let half_height = theta.tan();
@@ -47,16 +51,23 @@ impl Camera {
             u,
             v,
             lens_radius: aperture / 2.,
+            time0: t0,
+            time1: t1,
         }
     }
 
     #[inline]
     pub fn get_ray(&self, u: Float, v: Float) -> Ray {
+        let mut rng = thread_rng();
+
         let rd = self.lens_radius * random_in_unit_disk();
         let offset = self.u * rd.x() + self.v * rd.y();
+        let time = self.time0 + rng.gen::<Float>() * (self.time1 - self.time0);
+
         Ray::new(
             self.origin + offset,
             self.lower_left_corner - self.origin + u * self.horizontal + v * self.vertical - offset,
+            time,
         )
     }
 }
@@ -75,6 +86,8 @@ mod tests {
             2.,
             0.,
             1.,
+            0.,
+            0.,
         );
         assert_eq!(Pos::zero(), cam.origin);
         assert_eq!(pos(-2., -1., -1.), cam.lower_left_corner);

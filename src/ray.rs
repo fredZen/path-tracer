@@ -4,11 +4,12 @@ use crate::prelude::*;
 pub struct Ray {
     a: Pos,
     b: Dir,
+    time: Float,
 }
 
 impl Ray {
-    pub fn new(a: Pos, b: Dir) -> Self {
-        Ray { a, b }
+    pub fn new(a: Pos, b: Dir, ti: Float) -> Self {
+        Ray { a, b, time: ti }
     }
 
     pub fn origin(&self) -> Pos {
@@ -17,6 +18,10 @@ impl Ray {
 
     pub fn direction(&self) -> Dir {
         self.b
+    }
+
+    pub fn time(&self) -> Float {
+        self.time
     }
 
     pub fn point_at(&self, t: Float) -> Pos {

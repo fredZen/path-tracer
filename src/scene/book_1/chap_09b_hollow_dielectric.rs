@@ -1,22 +1,23 @@
-use super::Scene;
 use crate::camera::Camera;
 use crate::hitable::{hitable_list, sphere, HitableBox};
 use crate::material::{dielectric, lambertian, metal};
 use crate::prelude::*;
+use crate::scene::Scene;
 use crate::Settings;
 
 fn camera(settings: &Settings) -> Camera {
-    let look_from = pos(3., 3., 2.);
+    let look_from = pos(0., 0., 0.);
     let look_at = pos(0., 0., -1.);
-    let focus_dist = (look_at - look_from).length();
-    super::camera(
+    crate::scene::camera(
         look_from,
         look_at,
         dir(0., 1., 0.),
-        20.,
-        2.,
-        focus_dist,
+        90.,
+        0.,
+        1.,
         settings,
+        0.,
+        0.,
     )
 }
 
