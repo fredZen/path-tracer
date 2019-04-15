@@ -65,22 +65,54 @@ pub struct BoundingHierarchy {
     right: HitableBox,
 }
 
-fn bounding_box_compare<F: Fn(Pos) -> Float>(f: F, time0: Float, time1: Float, h1: &HitableBox, h2: &HitableBox) -> Ordering {
-    let c1 = f(h1.bounding_box(time0, time1).expect("no bounding box").min);
-    let c2 = f(h2.bounding_box(time0, time1).expect("no bounding box").min);
+#[derive(Clone, Copy, Debug)]
+enum Axis {
+    X,
+    Y,
+    Z,
+}
+
+impl Axis {
+    fn get(self, v: Pos) -> Float {
+        use Axis::*;
+        match self {
+            X => v.x(),
+            Y => v.y(),
+            Z => v.z(),
+        }
+    }
+}
+
+impl Distribution<Axis> for rand::distributions::Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Axis {
+        use Axis::*;
+        match rng.gen_range(0, 3) {
+            0 => X,
+            1 => Y,
+            _ => Z,
+        }
+    }
+}
+
+fn bounding_box_compare(
+    axis: Axis,
+    time0: Float,
+    time1: Float,
+    h1: &HitableBox,
+    h2: &HitableBox,
+) -> Ordering {
+    let c1 = axis.get(h1.bounding_box(time0, time1).expect("no bounding box").min);
+    let c2 = axis.get(h2.bounding_box(time0, time1).expect("no bounding box").min);
 
     c1.partial_cmp(&c2).unwrap()
 }
 
 impl BoundingHierarchy {
-    pub fn build(mut list: Vec<HitableBox>, time0: Float, time1: Float) -> HitableBox {
-        let mut rng = thread_rng();
-        let axis = rng.gen_range(0, 3);
-        match axis {
-            0 => list.sort_unstable_by(|h1, h2| bounding_box_compare(|p| p.x(), time0, time1, h1, h2)),
-            1 => list.sort_unstable_by(|h1, h2| bounding_box_compare(|p| p.y(), time0, time1, h1, h2)),
-            _ => list.sort_unstable_by(|h1, h2| bounding_box_compare(|p| p.z(), time0, time1, h1, h2)),
-        }
+    pub fn build(
+        mut list: Vec<HitableBox>,
+        time0: Float,
+        time1: Float,
+    ) -> HitableBox {
         let n = list.len();
         if n == 1 {
             list.into_iter().next().unwrap()
@@ -92,9 +124,12 @@ impl BoundingHierarchy {
 
                 (left, right)
             } else {
+                let mut rng = thread_rng();
+                let axis = rng.gen();
+                list.sort_unstable_by(|h1, h2| bounding_box_compare(axis, time0, time1, h1, h2));
                 let tail = list.split_off(n / 2);
-                let left: HitableBox = BoundingHierarchy::build(list, time0, time1);
-                let right: HitableBox = BoundingHierarchy::build(tail, time0, time1);
+                let left = BoundingHierarchy::build(list, time0, time1);
+                let right = BoundingHierarchy::build(tail, time0, time1);
                 (left, right)
             };
             let lbounds = left.bounding_box(time0, time1).expect("no bounding box");
