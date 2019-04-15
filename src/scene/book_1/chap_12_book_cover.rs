@@ -1,6 +1,6 @@
 use crate::scene::prelude::*;
 
-fn camera(settings: &Settings) -> Camera {
+fn camera( settings: &Settings) -> Camera {
     let look_from = pos(13., 2., 3.);
     let look_at = pos(0., 0., 0.);
     crate::scene::camera(
@@ -16,10 +16,10 @@ fn camera(settings: &Settings) -> Camera {
     )
 }
 
-fn world() -> HitableBox {
+fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     let mut rng = thread_rng();
     let mut list = vec![];
-    list.push(sphere(
+    list.push(factory.sphere(
         pos(0., -1000., 0.),
         1000.,
         lambertian(col(0.5, 0.5, 0.5)),
@@ -56,20 +56,20 @@ fn world() -> HitableBox {
                 b as Float + 0.9 * rng.gen::<Float>(),
             );
             if (center - pos(4., 0.2, 0.)).length() > 0.9 {
-                list.push(sphere(center, 0.2, random_mat()))
+                list.push(factory.sphere(center, 0.2, random_mat()))
             }
         }
     }
 
-    list.push(sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
-    list.push(sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
-    list.push(sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
-    hitable_list(list)
+    list.push(factory.sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
+    list.push(factory.sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
+    list.push(factory.sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
+    factory.hitable_list(list)
 }
 
-pub fn scene(settings: &Settings) -> Scene {
+pub fn scene<C>(factory: &HitableFactory<C>, settings: &Settings) -> Scene<C> {
     Scene {
         camera: camera(settings),
-        world: world(),
+        world: world(factory),
     }
 }

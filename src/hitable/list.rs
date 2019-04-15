@@ -1,23 +1,22 @@
 use super::prelude::*;
 
-#[derive(Debug)]
-pub struct HitableList {
-    list: Vec<Box<Hitable + Send + Sync>>,
+pub struct HitableList<C> {
+    list: Vec<Box<Hitable<C> + Send + Sync>>,
 }
 
-impl HitableList {
-    pub fn new(list: Vec<Box<Hitable + Send + Sync>>) -> Self {
+impl<C> HitableList<C> {
+    pub fn new(list: Vec<Box<Hitable<C> + Send + Sync>>) -> Self {
         Self { list }
     }
 }
 
-impl Hitable for HitableList {
-    fn hit(&self, r: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
+impl<C> Hitable<C> for HitableList<C> {
+    fn hit(&self, c: &mut C, r: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
         let mut result = None;
         let mut closest_so_far = t_max;
 
         for h in self.list.iter() {
-            let res = h.hit(r, t_min, closest_so_far);
+            let res = h.hit(c, r, t_min, closest_so_far);
             if let Some(HitRecord { t, .. }) = res {
                 closest_so_far = t;
                 result = res;

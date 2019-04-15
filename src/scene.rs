@@ -21,7 +21,7 @@ fn camera(
     )
 }
 
-pub struct Scene {
+pub struct Scene<C> {
     pub camera: Camera,
-    pub world: HitableBox,
+    pub world: HitableBox<C>,
 }

@@ -16,20 +16,15 @@ fn camera(settings: &Settings, t0: Float, t1: Float) -> Camera {
     )
 }
 
-fn world(t0: Float, t1: Float) -> HitableBox {
+fn world<C>(factory: &HitableFactory<C>, t0: Float, t1: Float) -> HitableBox<C> {
     let mut rng = thread_rng();
     let mut list = vec![];
-    list.push(sphere(
-        pos(0., -1000., 0.),
-        1000.,
-        lambertian(col(0.5, 0.5, 0.5)),
-    ));
 
-    fn random_sphere(center: Pos) -> HitableBox {
+    fn random_sphere<C>(factory: &HitableFactory<C>, center: Pos) -> HitableBox<C> {
         let mut rng = thread_rng();
         let choose_mat = rng.gen::<Float>();
         if choose_mat < 0.8 {
-            moving_sphere(
+            factory.moving_sphere(
                 center,
                 center + dir(0., 0.5 * rng.gen::<Float>(), 0.),
                 0.,
@@ -42,7 +37,7 @@ fn world(t0: Float, t1: Float) -> HitableBox {
                 )),
             )
         } else if choose_mat < 0.95 {
-            sphere(
+            factory.sphere(
                 center,
                 0.2,
                 metal(
@@ -55,7 +50,7 @@ fn world(t0: Float, t1: Float) -> HitableBox {
                 ),
             )
         } else {
-            sphere(center, 0.2, dielectric(1.5))
+            factory.sphere(center, 0.2, dielectric(1.5))
         }
     }
 
@@ -67,22 +62,32 @@ fn world(t0: Float, t1: Float) -> HitableBox {
                 b as Float + 0.9 * rng.gen::<Float>(),
             );
             if (center - pos(4., 0.2, 0.)).length() > 0.9 {
-                list.push(random_sphere(center))
+                list.push(random_sphere(factory, center))
             }
         }
     }
 
-    list.push(sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
-    list.push(sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
-    list.push(sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
-    bounding_hierarchy(list, t0, t1)
+    list.push(factory.sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
+    list.push(factory.sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
+    list.push(factory.sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
+    let objs = factory.bounding_hierarchy(list, t0, t1);
+
+    let mut list = vec![];
+    list.push(factory.sphere(
+        pos(0., -1000., 0.),
+        1000.,
+        lambertian(col(0.5, 0.5, 0.5)),
+    ));
+    list.push(objs);
+
+    factory.bounding_hierarchy(list, t0, t1)
 }
 
-pub fn scene(settings: &Settings) -> Scene {
+pub fn scene<C>(factory: &HitableFactory<C>, settings: &Settings) -> Scene<C> {
     let t0 = 0.;
     let t1 = 1.;
     Scene {
         camera: camera(settings, t0, t1),
-        world: world(t0, t1),
+        world: world(factory, t0, t1),
     }
 }

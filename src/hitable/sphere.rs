@@ -28,9 +28,9 @@ impl Sphere {
     }
 }
 
-impl Hitable for Sphere {
+impl<C> Hitable<C> for Sphere {
     #[inline]
-    fn hit(&self, ray: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
+    fn hit(&self, _c: &mut C, ray: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
         let oc = ray.origin() - self.center;
         let a = ray.direction().squared_length();
         let b = oc.dot(ray.direction());
@@ -50,9 +50,10 @@ impl Hitable for Sphere {
     }
 
     fn bounding_box(&self, _t0: Float, _t1: Float) -> Option<Cow<BoundingBox>> {
+        let half_diag = dir(self.radius, self.radius, self.radius);
         Some(Cow::Owned(BoundingBox::new(
-            self.center - dir(self.radius, self.radius, self.radius),
-            self.center + dir(self.radius, self.radius, self.radius),
+            self.center - half_diag,
+            self.center + half_diag,
         )))
     }
 }

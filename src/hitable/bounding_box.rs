@@ -1,7 +1,7 @@
 // Note: For the moment, this rather seems to slow things down than speed them up
 
 use super::prelude::*;
-use crate::hitable::HitableBox;
+use crate::hitable::{HitableBox, HitableFactory};
 use itertools::izip;
 use rand::prelude::*;
 use std::cmp::Ordering;
@@ -58,11 +58,10 @@ impl BoundingBox {
     }
 }
 
-#[derive(Debug)]
-pub struct BoundingHierarchy {
+pub struct BoundingHierarchy<C> {
     bounds: BoundingBox,
-    left: HitableBox,
-    right: HitableBox,
+    left: HitableBox<C>,
+    right: HitableBox<C>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -94,12 +93,12 @@ impl Distribution<Axis> for rand::distributions::Standard {
     }
 }
 
-fn bounding_box_compare(
+fn bounding_box_compare<C>(
     axis: Axis,
     time0: Float,
     time1: Float,
-    h1: &HitableBox,
-    h2: &HitableBox,
+    h1: &HitableBox<C>,
+    h2: &HitableBox<C>,
 ) -> Ordering {
     let c1 = axis.get(h1.bounding_box(time0, time1).expect("no bounding box").min);
     let c2 = axis.get(h2.bounding_box(time0, time1).expect("no bounding box").min);
@@ -107,12 +106,13 @@ fn bounding_box_compare(
     c1.partial_cmp(&c2).unwrap()
 }
 
-impl BoundingHierarchy {
+impl<C: 'static> BoundingHierarchy<C> {
     pub fn build(
-        mut list: Vec<HitableBox>,
+        factory: &dyn HitableFactory<C>,
+        mut list: Vec<HitableBox<C>>,
         time0: Float,
         time1: Float,
-    ) -> HitableBox {
+    ) -> HitableBox<C> {
         let n = list.len();
         if n == 1 {
             list.into_iter().next().unwrap()
@@ -128,8 +128,8 @@ impl BoundingHierarchy {
                 let axis = rng.gen();
                 list.sort_unstable_by(|h1, h2| bounding_box_compare(axis, time0, time1, h1, h2));
                 let tail = list.split_off(n / 2);
-                let left = BoundingHierarchy::build(list, time0, time1);
-                let right = BoundingHierarchy::build(tail, time0, time1);
+                let left = factory.bounding_hierarchy(list, time0, time1);
+                let right = factory.bounding_hierarchy(tail, time0, time1);
                 (left, right)
             };
             let lbounds = left.bounding_box(time0, time1).expect("no bounding box");
@@ -144,12 +144,12 @@ impl BoundingHierarchy {
     }
 }
 
-impl Hitable for BoundingHierarchy {
+impl<C: 'static> Hitable<C> for BoundingHierarchy<C> {
     #[inline]
-    fn hit(&self, r: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
+    fn hit(&self, c: &mut C, r: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
         if self.bounds.hit(r, t_min, t_max) {
-            let left = self.left.hit(r, t_min, t_max);
-            let right = self.right.hit(r, t_min, t_max);
+            let left = self.left.hit(c, r, t_min, t_max);
+            let right = self.right.hit(c, r, t_min, t_max);
             match (&left, &right) {
                 (Some(l), Some(r)) => {
                     if l.t < r.t {
@@ -168,5 +168,44 @@ impl Hitable for BoundingHierarchy {
 
     fn bounding_box(&self, _t0: Float, _t1: Float) -> Option<Cow<BoundingBox>> {
         Some(Cow::Borrowed(&self.bounds))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bounding_box_creation() {
+        let b0 = BoundingBox::new(pos(0., 10., 20.), pos(100., 200., 300.));
+        let b1 = BoundingBox::new(pos(5., 7., 2.), pos(400., 100., 60.));
+        let b = BoundingBox::surrounding(&b0, &b1);
+        assert!(BoundingBox::new(pos(0., 7., 2.), pos(400., 200., 300.)) == b);
+    }
+
+    #[test]
+    fn test_bounding_box_hit_with_axis_aligned_rays() {
+        let b = BoundingBox::new(pos(0., 0., 0.), pos(10., 10., 10.));
+
+        // x
+        assert!(b.hit(&Ray::new(pos(-2., 5., 4.), dir(1., 0., 0.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(-2., 15., 4.), dir(1., 0., 0.), 0.), 0., 10.));
+
+        assert!(b.hit(&Ray::new(pos(7., 5., 6.), dir(-1., 0., 0.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(7., 5., 26.), dir(-1., 0., 0.), 0.), 0., 10.));
+
+        // y
+        assert!(b.hit(&Ray::new(pos(5., -1., 7.), dir(0., 1., 0.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(55., -1., 7.), dir(0., 1., 0.), 0.), 0., 10.));
+
+        assert!(b.hit(&Ray::new(pos(5., 8., 3.), dir(0., -1., 0.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(5., 8., 33.), dir(0., -1., 0.), 0.), 0., 10.));
+
+        // z
+        assert!(b.hit(&Ray::new(pos(5., 5., -1.), dir(0., 0., 1.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(5., 75., -1.), dir(0., 0., 1.), 0.), 0., 10.));
+
+        assert!(b.hit(&Ray::new(pos(5., 5., 6.), dir(0., 0., -1.), 0.), 0., 10.));
+        assert!(!b.hit(&Ray::new(pos(35., 5., 6.), dir(0., 0., -1.), 0.), 0., 10.));
     }
 }

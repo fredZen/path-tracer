@@ -47,9 +47,9 @@ impl MovingSphere {
     }
 }
 
-impl Hitable for MovingSphere {
+impl<C> Hitable<C> for MovingSphere {
     #[inline]
-    fn hit(&self, ray: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
+    fn hit(&self, _c: &mut C, ray: &Ray, t_min: Float, t_max: Float) -> Option<HitRecord> {
         let oc = ray.origin() - self.center(ray.time());
         let a = ray.direction().squared_length();
         let b = oc.dot(ray.direction());
@@ -69,14 +69,9 @@ impl Hitable for MovingSphere {
     }
 
     fn bounding_box(&self, t0: Float, t1: Float) -> Option<Cow<BoundingBox>> {
-        let b0 = BoundingBox::new(
-            self.center(t0) - dir(self.radius, self.radius, self.radius),
-            self.center(t0) + dir(self.radius, self.radius, self.radius),
-        );
-        let b1 = BoundingBox::new(
-            self.center(t1) - dir(self.radius, self.radius, self.radius),
-            self.center(t1) + dir(self.radius, self.radius, self.radius),
-        );
+        let half_diag = dir(self.radius, self.radius, self.radius);
+        let b0 = BoundingBox::new(self.center(t0) - half_diag, self.center(t0) + half_diag);
+        let b1 = BoundingBox::new(self.center(t1) - half_diag, self.center(t1) + half_diag);
         Some(Cow::Owned(BoundingBox::surrounding(&b0, &b1)))
     }
 }

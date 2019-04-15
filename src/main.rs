@@ -8,6 +8,7 @@ mod scene;
 mod settings;
 mod vec3;
 
+use hitable::Stats;
 use pixbuf::Pixbuf;
 use prelude::*;
 use rand::prelude::*;
@@ -21,15 +22,15 @@ pub struct Settings {
 }
 
 #[inline]
-fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
-    if let Some(rec) = world.hit(r, 0.001, std::f32::MAX) {
+fn colour<C>(c: &mut C, r: &Ray, world: &Hitable<C>, depth: usize) -> Col {
+    if let Some(rec) = world.hit(c, r, 0.001, std::f32::MAX) {
         if depth > 0 {
             if let Some(Scatter {
                 scattered,
                 attenuation,
             }) = rec.mat.scatter(r, &rec)
             {
-                return attenuation * colour(&scattered, world, depth - 1);
+                return attenuation * colour(c, &scattered, world, depth - 1);
             }
         }
 
@@ -41,7 +42,7 @@ fn colour(r: &Ray, world: &Hitable, depth: usize) -> Col {
     }
 }
 
-fn render_once(settings: &Settings, scene: &scene::Scene) -> Pixbuf {
+fn render_once(c: &mut Stats, settings: &Settings, scene: &scene::Scene<Stats>) -> Pixbuf {
     let &Settings {
         width,
         height,
@@ -57,7 +58,7 @@ fn render_once(settings: &Settings, scene: &scene::Scene) -> Pixbuf {
             let u = (i as Float + rng.gen::<Float>()) / (width as Float);
             let v = 1. - (j as Float + rng.gen::<Float>()) / (height as Float);
             let r = camera.get_ray(u, v);
-            let c = colour(&r, &**world, depth);
+            let c = colour(c, &r, &**world, depth);
             res.put(i, j, c);
         }
     }
@@ -67,23 +68,29 @@ fn render_once(settings: &Settings, scene: &scene::Scene) -> Pixbuf {
 
 fn render() -> Pixbuf {
     let settings = settings::low();
-    // let scene = scene::book_2::chap_01_motion_blur::scene(&settings);
-    let scene = scene::book_2::chap_02_bounding_volumes::scene(&settings);
+    // let scene = scene::book_2::chap_01_motion_blur::scene(&hitable::TracingHitableFactory, &settings);
+    let scene = scene::book_2::chap_02_bounding_volumes::scene(&hitable::TracingHitableFactory, &settings);
 
-    let mut res = (0..settings.samples)
+    let (stats, mut pixbuf) = (0..settings.samples)
         .into_par_iter()
-        .map(|_| render_once(&settings, &scene))
+        .map(|_| {
+            let mut stats = Stats::new();
+            let pixbuf = render_once(&mut stats, &settings, &scene);
+            (stats, pixbuf)
+        })
         .reduce(
-            || Pixbuf::new(settings.width, settings.height),
-            |mut i1, i2| {
-                i1 += i2;
-                i1
+            || (Stats::new(), Pixbuf::new(settings.width, settings.height)),
+            |(mut s1, mut p1), (s2, p2)| {
+                s1 += s2;
+                p1 += p2;
+                (s1, p1)
             },
         );
 
-    res /= settings.samples;
+    println!("{:#?}", stats);
+    pixbuf /= settings.samples;
 
-    res
+    pixbuf
 }
 
 fn main() {
