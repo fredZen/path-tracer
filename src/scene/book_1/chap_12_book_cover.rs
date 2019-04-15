@@ -1,10 +1,4 @@
-use crate::camera::Camera;
-use crate::hitable::{hitable_list, sphere, HitableBox};
-use crate::material::{dielectric, lambertian, metal, MaterialBox};
-use crate::prelude::*;
-use crate::scene::Scene;
-use crate::Settings;
-use rand::prelude::*;
+use crate::scene::prelude::*;
 
 fn camera(settings: &Settings) -> Camera {
     let look_from = pos(13., 2., 3.);

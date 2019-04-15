@@ -2,6 +2,7 @@ use super::reflect;
 use crate::prelude::*;
 use rand::prelude::*;
 
+#[derive(Debug)]
 pub struct Dielectric {
     ref_idx: Float,
 }

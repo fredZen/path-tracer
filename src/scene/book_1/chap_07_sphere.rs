@@ -1,9 +1,4 @@
-use crate::camera::Camera;
-use crate::hitable::{hitable_list, sphere, HitableBox};
-use crate::material::lambertian;
-use crate::prelude::*;
-use crate::scene::Scene;
-use crate::Settings;
+use crate::scene::prelude::*;
 
 fn camera(settings: &Settings) -> Camera {
     let look_from = pos(0., 0., 0.);

@@ -20,6 +20,10 @@ impl Dir {
     pub fn z(self) -> Float {
         self.0[2]
     }
+
+    pub fn iter(&self) -> std::slice::Iter<Float> {
+        self.0.iter()
+    }
 }
 
 pub fn dir(x: Float, y: Float, z: Float) -> Dir {

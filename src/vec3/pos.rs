@@ -9,16 +9,20 @@ impl Pos {
         Self(Vec3::zero())
     }
 
-    fn x(self) -> Float {
+    pub fn x(self) -> Float {
         self.0[0]
     }
 
-    fn y(self) -> Float {
+    pub fn y(self) -> Float {
         self.0[1]
     }
 
-    fn z(self) -> Float {
+    pub fn z(self) -> Float {
         self.0[2]
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<Float> {
+        self.0.iter()
     }
 }
 

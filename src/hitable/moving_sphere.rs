@@ -1,5 +1,6 @@
-use crate::prelude::*;
+use super::prelude::*;
 
+#[derive(Debug)]
 pub struct MovingSphere {
     center0: Pos,
     center1: Pos,
@@ -65,5 +66,17 @@ impl Hitable for MovingSphere {
             }
         }
         None
+    }
+
+    fn bounding_box(&self, t0: Float, t1: Float) -> Option<Cow<BoundingBox>> {
+        let b0 = BoundingBox::new(
+            self.center(t0) - dir(self.radius, self.radius, self.radius),
+            self.center(t0) + dir(self.radius, self.radius, self.radius),
+        );
+        let b1 = BoundingBox::new(
+            self.center(t1) - dir(self.radius, self.radius, self.radius),
+            self.center(t1) + dir(self.radius, self.radius, self.radius),
+        );
+        Some(Cow::Owned(BoundingBox::surrounding(&b0, &b1)))
     }
 }

@@ -4,13 +4,14 @@ mod metal;
 
 use crate::prelude::*;
 use rand::prelude::*;
+use std::fmt::Debug;
 
 pub struct Scatter {
     pub attenuation: Col,
     pub scattered: Ray,
 }
 
-pub trait Material {
+pub trait Material: Debug {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<Scatter>;
 }
 

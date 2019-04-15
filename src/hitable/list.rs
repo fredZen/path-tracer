@@ -1,12 +1,13 @@
-use crate::prelude::*;
+use super::prelude::*;
 
+#[derive(Debug)]
 pub struct HitableList {
     list: Vec<Box<Hitable + Send + Sync>>,
 }
 
 impl HitableList {
-    pub fn new(list: Vec<Box<Hitable + Send + Sync>>) -> HitableList {
-        HitableList { list }
+    pub fn new(list: Vec<Box<Hitable + Send + Sync>>) -> Self {
+        Self { list }
     }
 }
 
@@ -24,5 +25,18 @@ impl Hitable for HitableList {
         }
 
         result
+    }
+
+    fn bounding_box(&self, t0: Float, t1: Float) -> Option<Cow<BoundingBox>> {
+        let first = self.list.first()?.bounding_box(t0, t1)?;
+
+        let r: Result<_, ()> = self.list.iter().skip(1).try_fold(first, |bounds, hitable| {
+            Ok(Cow::Owned(BoundingBox::surrounding(
+                bounds,
+                hitable.bounding_box(t0, t1).ok_or(())?,
+            )))
+        });
+
+        r.ok()
     }
 }

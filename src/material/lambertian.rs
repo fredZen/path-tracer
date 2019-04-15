@@ -1,6 +1,7 @@
 use super::random_in_unit_sphere;
 use crate::prelude::*;
 
+#[derive(Debug)]
 pub struct Lambertian {
     albedo: Col,
 }

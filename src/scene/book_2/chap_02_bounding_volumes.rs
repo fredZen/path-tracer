@@ -1,6 +1,6 @@
 use crate::scene::prelude::*;
 
-fn camera(settings: &Settings) -> Camera {
+fn camera(settings: &Settings, t0: Float, t1: Float) -> Camera {
     let look_from = pos(13., 2., 3.);
     let look_at = pos(0., 0., 0.);
     crate::scene::camera(
@@ -11,12 +11,12 @@ fn camera(settings: &Settings) -> Camera {
         0.1,
         10.,
         settings,
-        0.,
-        1.,
+        t0,
+        t1,
     )
 }
 
-fn world() -> HitableBox {
+fn world(t0: Float, t1: Float) -> HitableBox {
     let mut rng = thread_rng();
     let mut list = vec![];
     list.push(sphere(
@@ -75,12 +75,14 @@ fn world() -> HitableBox {
     list.push(sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
     list.push(sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
     list.push(sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
-    hitable_list(list)
+    bounding_hierarchy(list, t0, t1)
 }
 
 pub fn scene(settings: &Settings) -> Scene {
+    let t0 = 0.;
+    let t1 = 1.;
     Scene {
-        camera: camera(settings),
-        world: world(),
+        camera: camera(settings, t0, t1),
+        world: world(t0, t1),
     }
 }

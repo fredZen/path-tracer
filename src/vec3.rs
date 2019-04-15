@@ -27,6 +27,10 @@ impl Vec3 {
     pub fn new(e0: Float, e1: Float, e2: Float) -> Vec3 {
         Vec3([e0, e1, e2])
     }
+
+    fn iter(&self) -> std::slice::Iter<Float> {
+        self.0.iter()
+    }
 }
 
 impl Vector for Vec3 {

@@ -1,6 +1,7 @@
 use super::{random_in_unit_sphere, reflect};
 use crate::prelude::*;
 
+#[derive(Debug)]
 pub struct Metal {
     albedo: Col,
     fuzz: Float,

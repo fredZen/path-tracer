@@ -1,10 +1,8 @@
 pub mod book_1;
 pub mod book_2;
+mod prelude;
 
-use super::Settings;
-use crate::camera::Camera;
-use crate::hitable::HitableBox;
-use crate::prelude::*;
+use prelude::*;
 
 fn camera(
     look_from: Pos,

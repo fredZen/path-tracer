@@ -67,7 +67,8 @@ fn render_once(settings: &Settings, scene: &scene::Scene) -> Pixbuf {
 
 fn render() -> Pixbuf {
     let settings = settings::low();
-    let scene = scene::book_2::chap_01_motion_blur::scene(&settings);
+    // let scene = scene::book_2::chap_01_motion_blur::scene(&settings);
+    let scene = scene::book_2::chap_02_bounding_volumes::scene(&settings);
 
     let mut res = (0..settings.samples)
         .into_par_iter()

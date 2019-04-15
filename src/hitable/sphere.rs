@@ -1,5 +1,6 @@
-use crate::prelude::*;
+use super::prelude::*;
 
+#[derive(Debug)]
 pub struct Sphere {
     center: Pos,
     radius: Float,
@@ -46,5 +47,12 @@ impl Hitable for Sphere {
             }
         }
         None
+    }
+
+    fn bounding_box(&self, _t0: Float, _t1: Float) -> Option<Cow<BoundingBox>> {
+        Some(Cow::Owned(BoundingBox::new(
+            self.center - dir(self.radius, self.radius, self.radius),
+            self.center + dir(self.radius, self.radius, self.radius),
+        )))
     }
 }
