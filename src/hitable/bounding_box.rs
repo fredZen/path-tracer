@@ -1,5 +1,3 @@
-// Note: For the moment, this rather seems to slow things down than speed them up
-
 use super::prelude::*;
 use crate::hitable::{HitableBox, HitableFactory};
 use itertools::izip;
@@ -37,7 +35,7 @@ impl BoundingBox {
     }
 
     #[inline]
-    fn hit(&self, r: &Ray, t_min: Float, t_max: Float) -> bool {
+    fn hit(&self, r: &Ray, mut t_min: Float, mut t_max: Float) -> bool {
         for (min, max, d, o) in izip!(
             self.min.iter(),
             self.max.iter(),
@@ -48,8 +46,8 @@ impl BoundingBox {
             let t0 = (min - o) * inv_d;
             let t1 = (max - o) * inv_d;
             let (t0, t1) = if inv_d < 0. { (t1, t0) } else { (t0, t1) };
-            let t_min = if t0 > t_min { t0 } else { t_min };
-            let t_max = if t1 < t_max { t1 } else { t_max };
+            t_min = if t0 > t_min { t0 } else { t_min };
+            t_max = if t1 < t_max { t1 } else { t_max };
             if t_max <= t_min {
                 return false;
             }
