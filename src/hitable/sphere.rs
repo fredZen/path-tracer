@@ -50,7 +50,8 @@ impl<C> Hitable<C> for Sphere {
     }
 
     fn bounding_box(&self, _t0: Float, _t1: Float) -> Option<Cow<BoundingBox>> {
-        let half_diag = dir(self.radius, self.radius, self.radius);
+        let r = self.radius.abs();
+        let half_diag = dir(r, r, r);
         Some(Cow::Owned(BoundingBox::new(
             self.center - half_diag,
             self.center + half_diag,

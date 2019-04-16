@@ -69,7 +69,8 @@ impl<C> Hitable<C> for MovingSphere {
     }
 
     fn bounding_box(&self, t0: Float, t1: Float) -> Option<Cow<BoundingBox>> {
-        let half_diag = dir(self.radius, self.radius, self.radius);
+        let r = self.radius.abs();
+        let half_diag = dir(r, r, r);
         let b0 = BoundingBox::new(self.center(t0) - half_diag, self.center(t0) + half_diag);
         let b1 = BoundingBox::new(self.center(t1) - half_diag, self.center(t1) + half_diag);
         Some(Cow::Owned(BoundingBox::surrounding(&b0, &b1)))
