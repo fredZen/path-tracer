@@ -8,7 +8,8 @@ mod scene;
 mod settings;
 mod vec3;
 
-use hitable::Stats;
+use hitable::{HitableFactory, TracingHitableFactory, PlainHitableFactory, Stats};
+use scene::Scene;
 use pixbuf::Pixbuf;
 use prelude::*;
 use rand::prelude::*;
@@ -42,14 +43,14 @@ fn colour<C>(c: &mut C, r: &Ray, world: &Hitable<C>, depth: usize) -> Col {
     }
 }
 
-fn render_once(c: &mut Stats, settings: &Settings, scene: &scene::Scene<Stats>) -> Pixbuf {
+fn render_once<C>(c: &mut C, settings: &Settings, scene: &Scene<C>) -> Pixbuf {
     let &Settings {
         width,
         height,
         depth,
         ..
     } = settings;
-    let scene::Scene { world, camera } = scene;
+    let Scene { world, camera } = scene;
     let mut res = Pixbuf::new(width, height);
     let mut rng = thread_rng();
 
@@ -66,11 +67,29 @@ fn render_once(c: &mut Stats, settings: &Settings, scene: &scene::Scene<Stats>) 
     res
 }
 
-fn render() -> Pixbuf {
-    let settings = settings::low();
-    // let scene = scene::book_2::chap_01_motion_blur::scene(&hitable::TracingHitableFactory, &settings);
-    let scene = scene::book_2::chap_02_bounding_volumes::scene(&hitable::TracingHitableFactory, &settings);
+fn render<F: Fn(&PlainHitableFactory, &Settings) -> Scene<()>>(settings: Settings, scene: F) -> Pixbuf {
+    let scene = scene(&PlainHitableFactory, &settings);
+    let mut pixbuf = (0..settings.samples)
+        .into_par_iter()
+        .map(|_| {
+            let pixbuf = render_once(&mut (), &settings, &scene);
+            pixbuf
+        })
+        .reduce(
+            || (Pixbuf::new(settings.width, settings.height)),
+            |mut p1, p2| {
+                p1 += p2;
+                p1
+            },
+        );
 
+    pixbuf /= settings.samples;
+
+    pixbuf
+}
+
+fn render_with_stats<F: Fn(&TracingHitableFactory, &Settings) -> Scene<Stats>>(settings: Settings, scene: F) -> Pixbuf {
+    let scene = scene(&TracingHitableFactory, &settings);
     let (stats, mut pixbuf) = (0..settings.samples)
         .into_par_iter()
         .map(|_| {
@@ -94,5 +113,21 @@ fn render() -> Pixbuf {
 }
 
 fn main() {
-    render().as_image().save("image.png").unwrap();
+    let settings = settings::high();
+
+    // let scene = scene::book_1::chap_03_simple_camera_and_background::scene;
+    // let scene = scene::book_1::chap_07_sphere::scene;
+    // let scene = scene::book_1::chap_08a_lambertian::scene;
+    // let scene = scene::book_1::chap_08b_metal::scene;
+    // let scene = scene::book_1::chap_08c_fuzzy_metal::scene;
+    // let scene = scene::book_1::chap_09a_dielectric::scene;
+    // let scene = scene::book_1::chap_09b_hollow_dielectric::scene;
+    // let scene = scene::book_1::chap_10a_field_of_view::scene;
+    // let scene = scene::book_1::chap_10b_positionable_camera::scene;
+    // let scene = scene::book_1::chap_11_depth_of_field::scene;
+    // let scene = scene::book_1::chap_12_book_cover::scene;
+    // let scene = scene::book_2::chap_01_motion_blur::scene;
+    let scene = scene::book_2::chap_02_bounding_volumes::scene;
+
+    render(settings, scene).as_image().save("image.png").unwrap();
 }

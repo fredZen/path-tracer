@@ -83,7 +83,7 @@ fn world<C>(factory: &HitableFactory<C>, t0: Float, t1: Float) -> HitableBox<C> 
     factory.bounding_hierarchy(list, t0, t1)
 }
 
-pub fn scene<C>(factory: &HitableFactory<C>, settings: &Settings) -> Scene<C> {
+pub fn scene<C, H: HitableFactory<C>>(factory: &H, settings: &Settings) -> Scene<C> {
     let t0 = 0.;
     let t1 = 1.;
     Scene {

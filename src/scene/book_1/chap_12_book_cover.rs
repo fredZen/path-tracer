@@ -67,7 +67,7 @@ fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     factory.hitable_list(list)
 }
 
-pub fn scene<C>(factory: &HitableFactory<C>, settings: &Settings) -> Scene<C> {
+pub fn scene<C, H: HitableFactory<C>>(factory: &H, settings: &Settings) -> Scene<C> {
     Scene {
         camera: camera(settings),
         world: world(factory),
