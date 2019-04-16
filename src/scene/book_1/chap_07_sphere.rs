@@ -18,8 +18,16 @@ fn camera(settings: &Settings) -> Camera {
 
 fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     factory.hitable_list(vec![
-        factory.sphere(pos(0., 0., -1.), 0.5, lambertian(col(0.5, 0.5, 0.5))),
-        factory.sphere(pos(0., -100.5, -1.), 100., lambertian(col(0.5, 0.5, 0.5))),
+        factory.sphere(
+            pos(0., 0., -1.),
+            0.5,
+            lambertian(constant_texture(col(0.5, 0.5, 0.5))),
+        ),
+        factory.sphere(
+            pos(0., -100.5, -1.),
+            100.,
+            lambertian(constant_texture(col(0.5, 0.5, 0.5))),
+        ),
     ])
 }
 

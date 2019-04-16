@@ -30,11 +30,11 @@ fn world<C>(factory: &HitableFactory<C>, t0: Float, t1: Float) -> HitableBox<C> 
                 0.,
                 1.,
                 0.2,
-                lambertian(col(
+                lambertian(constant_texture(col(
                     rng.gen::<Float>() * rng.gen::<Float>(),
                     rng.gen::<Float>() * rng.gen::<Float>(),
                     rng.gen::<Float>() * rng.gen::<Float>(),
-                )),
+                ))),
             )
         } else if choose_mat < 0.95 {
             factory.sphere(
@@ -68,12 +68,20 @@ fn world<C>(factory: &HitableFactory<C>, t0: Float, t1: Float) -> HitableBox<C> 
     }
 
     list.push(factory.sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
-    list.push(factory.sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
+    list.push(factory.sphere(
+        pos(-4., 1., 0.),
+        1.,
+        lambertian(constant_texture(col(0.4, 0.2, 0.1))),
+    ));
     list.push(factory.sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
     let objs = factory.bounding_hierarchy(list, t0, t1);
 
     let mut list = vec![];
-    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(col(0.5, 0.5, 0.5))));
+    list.push(factory.sphere(
+        pos(0., -1000., 0.),
+        1000.,
+        lambertian(constant_texture(col(0.5, 0.5, 0.5))),
+    ));
     list.push(objs);
 
     factory.bounding_hierarchy(list, t0, t1)

@@ -1,6 +1,7 @@
 pub use crate::hitable::{HitRecord, Hitable};
 pub use crate::material::{Material, Scatter};
 pub use crate::ray::Ray;
+pub use crate::texture::{constant_texture, Texture, TextureBox};
 pub use crate::vec3::col::{col, Col};
 pub use crate::vec3::dir::{dir, Dir};
 pub use crate::vec3::pos::{pos, Pos};

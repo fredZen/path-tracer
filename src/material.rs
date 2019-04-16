@@ -21,7 +21,7 @@ pub fn dielectric(ri: Float) -> MaterialBox {
     Box::new(dielectric::Dielectric::new(ri))
 }
 
-pub fn lambertian(albedo: Col) -> MaterialBox {
+pub fn lambertian(albedo: TextureBox) -> MaterialBox {
     Box::new(lambertian::Lambertian::new(albedo))
 }
 

@@ -6,6 +6,7 @@ mod prelude;
 mod ray;
 mod scene;
 mod settings;
+mod texture;
 mod vec3;
 
 use hitable::{HitableFactory, PlainHitableFactory, Stats, TracingHitableFactory};

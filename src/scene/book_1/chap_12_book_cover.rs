@@ -19,17 +19,21 @@ fn camera(settings: &Settings) -> Camera {
 fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     let mut rng = thread_rng();
     let mut list = vec![];
-    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(col(0.5, 0.5, 0.5))));
+    list.push(factory.sphere(
+        pos(0., -1000., 0.),
+        1000.,
+        lambertian(constant_texture(col(0.5, 0.5, 0.5))),
+    ));
 
     fn random_mat() -> MaterialBox {
         let mut rng = thread_rng();
         let choose_mat = rng.gen::<Float>();
         if choose_mat < 0.8 {
-            lambertian(col(
+            lambertian(constant_texture(col(
                 rng.gen::<Float>() * rng.gen::<Float>(),
                 rng.gen::<Float>() * rng.gen::<Float>(),
                 rng.gen::<Float>() * rng.gen::<Float>(),
-            ))
+            )))
         } else if choose_mat < 0.95 {
             metal(
                 col(
@@ -58,7 +62,11 @@ fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     }
 
     list.push(factory.sphere(pos(0., 1., 0.), 1., dielectric(1.5)));
-    list.push(factory.sphere(pos(-4., 1., 0.), 1., lambertian(col(0.4, 0.2, 0.1))));
+    list.push(factory.sphere(
+        pos(-4., 1., 0.),
+        1.,
+        lambertian(constant_texture(col(0.4, 0.2, 0.1))),
+    ));
     list.push(factory.sphere(pos(4., 1., 0.), 1., metal(col(0.7, 0.6, 0.5), 0.)));
     factory.hitable_list(list)
 }
