@@ -1,6 +1,6 @@
 use crate::scene::prelude::*;
 
-fn camera( settings: &Settings) -> Camera {
+fn camera(settings: &Settings) -> Camera {
     let look_from = pos(13., 2., 3.);
     let look_at = pos(0., 0., 0.);
     crate::scene::camera(
@@ -19,11 +19,7 @@ fn camera( settings: &Settings) -> Camera {
 fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     let mut rng = thread_rng();
     let mut list = vec![];
-    list.push(factory.sphere(
-        pos(0., -1000., 0.),
-        1000.,
-        lambertian(col(0.5, 0.5, 0.5)),
-    ));
+    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(col(0.5, 0.5, 0.5))));
 
     fn random_sphere<C>(factory: &HitableFactory<C>, center: Pos) -> HitableBox<C> {
         let mut rng = thread_rng();

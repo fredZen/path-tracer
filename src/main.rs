@@ -8,12 +8,12 @@ mod scene;
 mod settings;
 mod vec3;
 
-use hitable::{HitableFactory, TracingHitableFactory, PlainHitableFactory, Stats};
-use scene::Scene;
+use hitable::{HitableFactory, PlainHitableFactory, Stats, TracingHitableFactory};
 use pixbuf::Pixbuf;
 use prelude::*;
 use rand::prelude::*;
 use rayon::prelude::*;
+use scene::Scene;
 
 pub struct Settings {
     pub width: usize,
@@ -67,7 +67,10 @@ fn render_once<C>(c: &mut C, settings: &Settings, scene: &Scene<C>) -> Pixbuf {
     res
 }
 
-fn render<F: Fn(&PlainHitableFactory, &Settings) -> Scene<()>>(settings: Settings, scene: F) -> Pixbuf {
+fn render<F>(settings: Settings, scene: F) -> Pixbuf
+where
+    F: Fn(&PlainHitableFactory, &Settings) -> Scene<()>,
+{
     let scene = scene(&PlainHitableFactory, &settings);
     let mut pixbuf = (0..settings.samples)
         .into_par_iter()
@@ -88,7 +91,10 @@ fn render<F: Fn(&PlainHitableFactory, &Settings) -> Scene<()>>(settings: Setting
     pixbuf
 }
 
-fn render_with_stats<F: Fn(&TracingHitableFactory, &Settings) -> Scene<Stats>>(settings: Settings, scene: F) -> Pixbuf {
+fn render_with_stats<F>(settings: Settings, scene: F) -> Pixbuf
+where
+    F: Fn(&TracingHitableFactory, &Settings) -> Scene<Stats>,
+{
     let scene = scene(&TracingHitableFactory, &settings);
     let (stats, mut pixbuf) = (0..settings.samples)
         .into_par_iter()
@@ -129,5 +135,8 @@ fn main() {
     // let scene = scene::book_2::chap_01_motion_blur::scene;
     let scene = scene::book_2::chap_02_bounding_volumes::scene;
 
-    render(settings, scene).as_image().save("image.png").unwrap();
+    render(settings, scene)
+        .as_image()
+        .save("image.png")
+        .unwrap();
 }

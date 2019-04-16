@@ -73,11 +73,7 @@ fn world<C>(factory: &HitableFactory<C>, t0: Float, t1: Float) -> HitableBox<C> 
     let objs = factory.bounding_hierarchy(list, t0, t1);
 
     let mut list = vec![];
-    list.push(factory.sphere(
-        pos(0., -1000., 0.),
-        1000.,
-        lambertian(col(0.5, 0.5, 0.5)),
-    ));
+    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(col(0.5, 0.5, 0.5))));
     list.push(objs);
 
     factory.bounding_hierarchy(list, t0, t1)

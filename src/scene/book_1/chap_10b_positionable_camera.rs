@@ -1,6 +1,6 @@
 use crate::scene::prelude::*;
 
-fn camera( settings: &Settings) -> Camera {
+fn camera(settings: &Settings) -> Camera {
     let look_from = pos(-2., 2., 1.);
     let look_at = pos(0., 0., -1.);
     crate::scene::camera(
