@@ -1,9 +1,5 @@
 use super::prelude::*;
-use std::collections::HashMap;
-use std::default::Default;
-use std::fmt::Debug;
-use std::hash::Hash;
-use std::ops::AddAssign;
+use std::{collections::HashMap, default::Default, fmt::Debug, hash::Hash, ops::AddAssign};
 
 #[derive(Debug, Default)]
 pub struct Record {

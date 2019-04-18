@@ -2,8 +2,7 @@ use super::prelude::*;
 use crate::hitable::{HitableBox, HitableFactory};
 use itertools::izip;
 use rand::prelude::*;
-use std::cmp::Ordering;
-use std::ops::Deref;
+use std::{cmp::Ordering, ops::Deref};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BoundingBox {

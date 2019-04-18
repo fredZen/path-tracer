@@ -25,7 +25,7 @@ pub struct Settings {
 
 #[inline]
 fn colour<C>(c: &mut C, r: &Ray, world: &Hitable<C>, depth: usize) -> Col {
-    if let Some(rec) = world.hit(c, r, 0.001, std::f32::MAX) {
+    if let Some(rec) = world.hit(c, r, 0.001, MAX) {
         if depth > 0 {
             if let Some(Scatter {
                 scattered,
