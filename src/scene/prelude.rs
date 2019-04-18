@@ -4,7 +4,7 @@ pub use crate::{
     material::{dielectric, lambertian, metal, MaterialBox},
     prelude::*,
     scene::Scene,
-    texture::{checker, constant_texture},
+    texture::{checker, constant_texture, noise_texture},
     Settings,
 };
 pub use rand::prelude::*;

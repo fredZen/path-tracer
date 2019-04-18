@@ -136,7 +136,8 @@ fn main() {
     // let scene = scene::book_2::chap_01_motion_blur::scene;
     // let scene = scene::book_2::chap_02_bounding_volumes::scene;
     // let scene = scene::book_2::chap_03a_checker_floor::scene;
-    let scene = scene::book_2::chap_03b_checker_spheres::scene;
+    // let scene = scene::book_2::chap_03b_checker_spheres::scene;
+    let scene = scene::book_2::chap_04a_perlin_spheres::scene;
 
     render(settings, scene)
         .as_image()

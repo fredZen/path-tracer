@@ -1,3 +1,5 @@
+mod perlin;
+
 use crate::prelude::*;
 use std::fmt::Debug;
 
@@ -59,4 +61,9 @@ impl Texture for Checker {
 
 pub fn checker(odd: TextureBox, even: TextureBox) -> TextureBox {
     Box::new(Checker { odd, even })
+}
+
+pub fn noise_texture() -> TextureBox {
+    use perlin::NoiseTexture;
+    Box::new(NoiseTexture)
 }
