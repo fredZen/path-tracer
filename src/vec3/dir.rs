@@ -5,7 +5,7 @@ use crate::prelude::*;
 pub struct Dir(pub(super) Vec3);
 
 impl Dir {
-    fn zero() -> Self {
+    pub fn zero() -> Self {
         Self(Vec3::zero())
     }
 
