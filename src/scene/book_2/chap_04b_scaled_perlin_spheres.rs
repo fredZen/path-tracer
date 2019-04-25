@@ -18,8 +18,8 @@ fn camera(settings: &Settings) -> Camera {
 
 fn world<C>(factory: &HitableFactory<C>) -> HitableBox<C> {
     let mut list = vec![];
-    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(noise_texture(1.))));
-    list.push(factory.sphere(pos(0., 2., 0.), 2., lambertian(noise_texture(1.))));
+    list.push(factory.sphere(pos(0., -1000., 0.), 1000., lambertian(noise_texture(4.))));
+    list.push(factory.sphere(pos(0., 2., 0.), 2., lambertian(noise_texture(4.))));
     factory.bounding_hierarchy(list, 0., 0.)
 }
 

@@ -90,10 +90,20 @@ pub fn noise(p: Pos) -> Float {
 }
 
 #[derive(Clone, Debug)]
-pub struct NoiseTexture;
+pub struct NoiseTexture {
+    scale: Float,
+}
+
+impl NoiseTexture {
+    pub fn new(scale: Float) -> Self {
+        NoiseTexture {
+            scale
+        }
+    }
+}
 
 impl Texture for NoiseTexture {
     fn value(&self, _u: Float, _v: Float, p: Pos) -> Col {
-        col(1., 1., 1.) * noise(p)
+        col(1., 1., 1.) * noise(self.scale * p)
     }
 }

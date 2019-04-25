@@ -63,7 +63,7 @@ pub fn checker(odd: TextureBox, even: TextureBox) -> TextureBox {
     Box::new(Checker { odd, even })
 }
 
-pub fn noise_texture() -> TextureBox {
+pub fn noise_texture(scale: Float) -> TextureBox {
     use perlin::NoiseTexture;
-    Box::new(NoiseTexture)
+    Box::new(NoiseTexture::new(scale))
 }
