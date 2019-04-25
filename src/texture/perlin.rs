@@ -57,6 +57,10 @@ pub fn noise(p: Pos) -> Float {
     let v = p.y() - j;
     let w = p.z() - k;
 
+    let u = u * u * (3. - 2. * u);
+    let v = v * v * (3. - 2. * v);
+    let w = w * w * (3. - 2. * w);
+
     let i = i as usize;
     let j = j as usize;
     let k = k as usize;
