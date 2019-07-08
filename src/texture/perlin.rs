@@ -84,12 +84,16 @@ pub fn noise(p: Pos) -> Float {
         perm_z,
     } = &*PERLIN_DATA;
 
+    let i = i as usize;
+    let j = j as usize;
+    let k = k as usize;
+
     for di in 0..2 {
         for dj in 0..2 {
             for dk in 0..2 {
-                let px = perm_x[(i as usize + di) & 255];
-                let py = perm_y[(j as usize + dj) & 255];
-                let pz = perm_z[(k as usize + dk) & 255];
+                let px = perm_x[(i.wrapping_add(di)) & 255];
+                let py = perm_y[(j.wrapping_add(dj)) & 255];
+                let pz = perm_z[(k.wrapping_add(dk)) & 255];
 
                 c[di][dj][dk] = ranvec[px ^ py ^ pz];
             }
